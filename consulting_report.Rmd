@@ -139,6 +139,32 @@ In this part, we want to investigate if there is any difference of the referral 
 
 
 
+\newpage
+
+## IV.Analysis on second opinion patients
+
+Among 65 patients who had second opinion, 3 of them still ordered the germline genetic testing.
+
+```{r, include = FALSE}
+dat_3 <- dat[dat$second_opinion == TRUE, ]
+nrow(dat_3)
+nrow(dat_3 %>% filter(`# Genetics Referrals`>=1))
+nrow(dat_3 %>% filter(`# Genetics Referrals`>=1&`Genetics Appt Scheduled`== 'yes'))
+nrow(dat_3 %>% filter(`# Genetics Referrals`>=1&`Genetics Appt Scheduled`== 'yes'& `Attended Appt` == 'yes'))
+sum(dat_3$`Testing Ordered` == 'yes')
+```
+  
+
+|Period|Total number of patients|Number of patients who placed a referral|Number of Patients who scheduled a meeting|Number of patients who attended the meeting|Number of Patients who ordered the test|Referral rate|
+|----------:|----------:|----------:|----------:|----------:|----------:|----------:|
+|Before     |         65|         11|          8|          6|          3|    0.04615|
+
+
+
+
+
+
+\newpage
 
 ## Appendix
 ```{r include = FALSE}
