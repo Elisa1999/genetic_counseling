@@ -1,6 +1,6 @@
 ---
 title: "consutling"
-author: "Zhihui Zhang"
+author: "Zhihui Zhang Shicong Wang"
 date: "3/28/2022"
 output: pdf_document
 ---
