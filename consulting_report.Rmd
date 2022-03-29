@@ -1,6 +1,7 @@
 ---
 title: "consutling"
-author: "Zhihui Zhang Shicong Wang"
+author: "Zhihui Zhang 
+         Shicong Wang"
 date: "3/28/2022"
 output: pdf_document
 ---
@@ -207,7 +208,7 @@ ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) 
    geom_bar(position = "dodge", stat = "identity") +
    geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
    ylab("Frequency")+
-   xlab("ECOD")
+   xlab("ECOG")
 ```
 
 
