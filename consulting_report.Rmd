@@ -16,6 +16,7 @@ library(readr)
 library(stringr)
 library(ggplot2)
 library(dplyr)
+library(stringr)
 ```
 
 
@@ -56,20 +57,162 @@ dat_1$`Initial Appt (#1-30)`[dat_1$`Initial Appt (#1-30)`> 22 & dat_1$`Initial A
 
 The overall referral rate is 0.3548387. There are 55 patients ordered the germline genetic test among 155 patients. We will divide the referral process into four parts and analyze the reasons of dropping of during each part. 
 
-### Part.I
+### Part.I Genetic referrals placed
 
-### Part.II
+```{r,include = FALSE}
+data<- dat_1
 
-### Part.III
+# probability that place genetic referrals
+data$`Genetics Referrals`<- ifelse(data$`# Genetics Referrals` >0, "yes", "no")
+# sum(data$`Genetics Referrals` == "yes") / length(data$`Genetics Referrals`)
 
-### Part.IV
+```
+
+|Options          |Number of patients|  Ratio|
+|----------------:|-----------------:|------:|
+|Yes - Acceptance |               111|   0.72| 
+|No               |                44|   0.28|  
+|Total            |               155|   -   | 
+
+### Part II. Genetic meeting scheduled
+```{r,include = FALSE}
+# probability that schedule genetic meeting
+data$`Genetics Appt Scheduled`<- ifelse(data$`Genetics Appt Scheduled` == "yes", "yes" , "no")
+data$`Genetics Appt Scheduled2`<- ifelse(data$`Genetics Appt Scheduled` == "yes", "yes" ,
+                                      ifelse(data$`Genetics Appt Scheduled` =="no", "no", "other"))
+# sum(data$`Genetics Appt Scheduled` == "yes") / sum(data$`Genetics Referrals` == "yes")
+```
+
+|Options          |Number of patients|  Ratio|
+|----------------:|-----------------:|------:|
+|Yes - Acceptance |                81|   0.73| 
+|No               |                30|   0.27|  
+|Total            |               111|   -   | 
+
+### Part III. Genetic meeting attended
+```{r,include = FALSE}
+data$`Attended Appt`[data$`Attended Appt` == "yes x2"] <- "yes"
+data$`Attended Appt`[data$`Attended Appt` == "???" | data$`Attended Appt` == "n/a"] <- "NA"
+
+data$`Attended Appt`<- ifelse(data$`Attended Appt` == "yes", "yes", "no")
+data$`Attended Appt2`<- ifelse(data$`Attended Appt` == "yes", "yes", 
+                            ifelse(data$`Attended Appt` == "no", "no", "other"))
+# probability that attend the appointment
+# sum(data$`Attended Appt` %in% 'yes') / sum(data$`Genetics Appt Scheduled` %in% 'yes')
+
+```
+
+|Options          |Number of patients|  Ratio|
+|----------------:|-----------------:|------:|
+|Yes - Acceptance |                59|   0.73| 
+|No               |                22|   0.27|  
+|Total            |                81|   -   | 
+
+### Part IV. Genetic counseling ordered 
+```{r,include = FALSE}
+data$`Testing Ordered`[data$`Testing Ordered` =="yes on second"]<- "yes"
+data$`Testing Ordered`[data$`Testing Ordered` == "NO - PREVIOUSLY COMPLETED OUTSIDE" | data$`Testing Ordered` == "other - discussed DNA banking b/c hospice"]<- "no"
+data$`Testing Ordered`[data$`Testing Ordered` =="??" | data$`Testing Ordered` =="n/a" ]<- "na"
+data$`Testing Ordered`<- ifelse(data$`Testing Ordered` == "yes", "yes", "no")
+data$`Testing Ordered2`<- ifelse(data$`Testing Ordered` == "yes", "yes", 
+                               ifelse(data$`Testing Ordered` == "no","no","other"))
+# probability that order genetic counseling 
+# sum(data$`Testing Ordered` %in% 'yes') / sum(data$`Attended Appt` %in% 'yes')
+```
+
+|Options          |Number of patients|  Ratio|
+|----------------:|-----------------:|------:|
+|Yes - Acceptance |                55|   0.93| 
+|No               |                 4|   0.07|  
+|Total            |                59|   -   | 
+
+### V. Proportions of individuals who proceed through each step of the process:
+The following Sankey plot illustrates how many individuals succeed (currently labeled “Accept”) at each step of the genetic counseling process. 
+
+```{r,include = FALSE}
+#library(networkD3)
+#source<- c("1st Step Accept","1st Step Accept","1st Step Reject","2nd Step Accept","2nd Step Accept","2nd Step Reject","3rd Step Accept","3rd Step Accept","3rd Step Reject","4th Step Reject")
+#target<- c("2nd Step Accept","2nd Step Reject","Rejection 1","3rd Step Accept","3rd Step Reject","Rejection 2","4th Step Accept","4th Step Reject","Rejection 3","Rejection 4")
+#value<- c(81,30,44,59,22,30,55,4,22,4)
+
+#link<- data.frame(source,target,value)
+
+#node <- data.frame(
+ #name=c(as.character(link$source), as.character(link$target)) %>% 
+    #unique()
+  #)
+
+#link$IDsource <- match(link$source, node$name)-1 
+#link$IDtarget <- match(link$target, node$name)-1
+ 
+#p2 <- sankeyNetwork(Links = link, Nodes = node,
+                     #Source = "IDsource", Target = "IDtarget",
+                     #Value = "value", NodeID = "name", 
+                     #sinksRight=FALSE,fontSize=18)
+
+#p2
+```
+
+## II. 
+
+### I.Cancer Stage and Genetic Counseling Referral Rate
+
+We thought that the stage of cancer might explain some of the variation in referral rate. The following stacked bar plot is an early attempt to visualize the proportions of individuals who ordered testing given that they were diagnosed with certain stages of cancer. Currently, we don’t see much of a pattern with the proportion of testing ordered and the stage, though this may be due to the fact that so many of the patients are diagnosed at stage 4 (the smaller proportions may be unreliable). If the client is interested in us exploring this, we can try other ways of visualizing this (such as adding error bars). 
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+df5<- data %>%
+  count(`Testing Ordered`,`Stage at Dx (#0-4)`) %>%
+  arrange(`Testing Ordered`, desc(`Stage at Dx (#0-4)`)) %>% # Rearranging in stacking order  
+  group_by(`Stage at Dx (#0-4)`) %>%
+  mutate(Freq2 = cumsum(n), # Calculating position of stacked Freq
+         prop = 100*n/sum(n))  # Calculating proportion of Freq
+
+df5$label = paste0(sprintf("%.2f", df5$prop), "%")
+
+ggplot(df5, aes(x = `Stage at Dx (#0-4)`, y = n, fill = `Testing Ordered`)) +
+   geom_bar(position = position_stack(), stat = "identity") +
+   geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3, color="white")+
+   ylab("Frequency")+
+   xlab("Stages")
+
+ggplot(df5, aes(x = `Stage at Dx (#0-4)`, y = n, fill = `Testing Ordered`)) +
+   geom_bar(position = "dodge", stat = "identity") +
+   geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
+   ylab("Frequency")+
+   xlab("Stages")
+```
+
+### II. ECOG and Genetic Counseling Referral Rate
+
+We were also curious about the ECOG which measured well-being.
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+df6<- data %>%
+  count(`Testing Ordered`,`ECOG at Initial (#0-4)`) %>%
+  arrange(`Testing Ordered`, desc(`ECOG at Initial (#0-4)`)) %>% # Rearranging in stacking order  
+  group_by(`ECOG at Initial (#0-4)`) %>%
+  mutate(Freq2 = cumsum(n), # Calculating position of stacked Freq
+         prop = 100*n/sum(n))  # Calculating proportion of Freq
+
+df6$label = paste0(sprintf("%.2f", df6$prop), "%")
+
+ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
+   geom_bar(position = position_stack(), stat = "identity") +
+   geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3, color="white")+
+   ylab("Frequency")+
+   xlab("ECOG")
+
+
+ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
+   geom_bar(position = "dodge", stat = "identity") +
+   geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
+   ylab("Frequency")+
+   xlab("ECOD")
+```
 
 
 
-
-
-
-## II. Change of referral rate
+## III. Change of referral rate
 
 ```{r, include = FALSE}
 #referral rate through time 
