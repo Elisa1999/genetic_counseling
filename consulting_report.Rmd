@@ -56,7 +56,7 @@ dat_1$`Initial Appt (#1-30)`[dat_1$`Initial Appt (#1-30)`> 22 & dat_1$`Initial A
 
 ## I.Referral rate and its analysis
 
-The overall referral rate is 0.3548387. There are 55 patients ordered the germline genetic test among 155 patients. We will divide the referral process into four parts and analyze the reasons of dropping of during each part. 
+The overall referral rate is 0.3548387. There are 55 patients ordered the germline genetic test among 155 patients. We will divide the referral process into four steps and analyze the reasons of dropping of during each step.  
 
 ### Part.I Genetic referrals placed
 
@@ -65,15 +65,16 @@ data<- dat_1
 
 # probability that place genetic referrals
 data$`Genetics Referrals`<- ifelse(data$`# Genetics Referrals` >0, "yes", "no")
-# sum(data$`Genetics Referrals` == "yes") / length(data$`Genetics Referrals`)
+sum(data$`Genetics Referrals` == "yes") / length(data$`Genetics Referrals`)
+sum(data$`Genetics Referrals` == "no") / length(data$`Genetics Referrals`)
 
 ```
 
-|Options          |Number of patients|  Ratio|
-|----------------:|-----------------:|------:|
-|Yes - Acceptance |               111|   0.72| 
-|No               |                44|   0.28|  
-|Total            |               155|   -   | 
+|Options          |Number of patients|  Ratio |
+|----------------:|-----------------:|-------:|
+|Yes - Acceptance |               111|   0.716| 
+|No               |                44|   0.284|  
+|Total            |               155|   -    | 
 
 ### Part II. Genetic meeting scheduled
 ```{r,include = FALSE}
@@ -81,7 +82,7 @@ data$`Genetics Referrals`<- ifelse(data$`# Genetics Referrals` >0, "yes", "no")
 data$`Genetics Appt Scheduled`<- ifelse(data$`Genetics Appt Scheduled` == "yes", "yes" , "no")
 data$`Genetics Appt Scheduled2`<- ifelse(data$`Genetics Appt Scheduled` == "yes", "yes" ,
                                       ifelse(data$`Genetics Appt Scheduled` =="no", "no", "other"))
-# sum(data$`Genetics Appt Scheduled` == "yes") / sum(data$`Genetics Referrals` == "yes")
+sum(data$`Genetics Appt Scheduled` == "yes") / sum(data$`Genetics Referrals` == "yes")
 ```
 
 |Options          |Number of patients|  Ratio|
@@ -127,6 +128,7 @@ data$`Testing Ordered2`<- ifelse(data$`Testing Ordered` == "yes", "yes",
 |No               |                 4|   0.07|  
 |Total            |                59|   -   | 
 
+
 ### V. Proportions of individuals who proceed through each step of the process:
 The following Sankey plot illustrates how many individuals succeed (currently labeled “Accept”) at each step of the genetic counseling process. 
 
@@ -154,13 +156,14 @@ The following Sankey plot illustrates how many individuals succeed (currently la
 #p2
 ```
 
-## II. 
+## II. Other Analysis
 
 ### I.Cancer Stage and Genetic Counseling Referral Rate
 
 We thought that the stage of cancer might explain some of the variation in referral rate. The following stacked bar plot is an early attempt to visualize the proportions of individuals who ordered testing given that they were diagnosed with certain stages of cancer. Currently, we don’t see much of a pattern with the proportion of testing ordered and the stage, though this may be due to the fact that so many of the patients are diagnosed at stage 4 (the smaller proportions may be unreliable). If the client is interested in us exploring this, we can try other ways of visualizing this (such as adding error bars). 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
+data$`Testing Ordered` <- ifelse(str_detect(data$`Testing Ordered`, 'yes'), 'yes', 'no')
 df5<- data %>%
   count(`Testing Ordered`,`Stage at Dx (#0-4)`) %>%
   arrange(`Testing Ordered`, desc(`Stage at Dx (#0-4)`)) %>% # Rearranging in stacking order  
@@ -175,7 +178,9 @@ ggplot(df5, aes(x = `Stage at Dx (#0-4)`, y = n, fill = `Testing Ordered`)) +
    geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3, color="white")+
    ylab("Frequency")+
    xlab("Stages")
+```
 
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 ggplot(df5, aes(x = `Stage at Dx (#0-4)`, y = n, fill = `Testing Ordered`)) +
    geom_bar(position = "dodge", stat = "identity") +
    geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
@@ -183,11 +188,12 @@ ggplot(df5, aes(x = `Stage at Dx (#0-4)`, y = n, fill = `Testing Ordered`)) +
    xlab("Stages")
 ```
 
-### II. ECOG and Genetic Counseling Referral Rate
+### II. ECOG and Referral Rate
 
-We were also curious about the ECOG which measured well-being.
+ECOG is an indicator of the wellness level of the patients. In the following section, we want to investigate the relationship between ECOG of patinets and the referral rate
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
+
 df6<- data %>%
   count(`Testing Ordered`,`ECOG at Initial (#0-4)`) %>%
   arrange(`Testing Ordered`, desc(`ECOG at Initial (#0-4)`)) %>% # Rearranging in stacking order  
@@ -202,8 +208,9 @@ ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) 
    geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3, color="white")+
    ylab("Frequency")+
    xlab("ECOG")
+```
 
-
+```{r echo = FALSE, warning=FALSE, message=FALSE}
 ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
    geom_bar(position = "dodge", stat = "identity") +
    geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
@@ -212,8 +219,9 @@ ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) 
 ```
 
 
-
 ## III. Change of referral rate
+
+In this section, we visualize the trends of referral rate using both 3 months and 6 months as a period. We can learn whether the referral rate is increasing or not through the time. 
 
 ```{r, include = FALSE}
 #referral rate through time 
@@ -225,6 +233,7 @@ dat_2$cut_3 <- cut(dat_2$`Initial Appt (#1-30)`, c(1, seq(3, 30, by=3)), include
 dat_2$cut_6 <- cut(dat_2$`Initial Appt (#1-30)`, c(1, seq(6, 30, by=6)), include.lowest = T) 
 
 ```
+
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 dat1 <- dat_2 %>% group_by(`Initial Appt (#1-30)`,cut_3) %>%
@@ -242,6 +251,7 @@ ggplot(dat1 , aes(x = cut_3, y = referral_rate)) +
   geom_point(data = dat2, size = 2) + 
   labs(title="Referral rate change per 3 month", x="Month", y="Referral rate")
 ```
+The plot above shows us the trend of referral rate using 3 month as a period.We jitter the points to avoid overlaps. The plot above does not indicate there is any increasing or decreasing trend. 
 
 ```{r echo=FALSE, message=FALSE}
 dat_2$cut_6 <- cut(dat_2$`Initial Appt (#1-30)`, c(1, seq(6, 30, by=6)), include.lowest = T) 
@@ -262,7 +272,7 @@ ggplot(dat1 , aes(x = cut_6, y = referral_rate)) +
    labs(title="Referral rate change per 6 month", x="Month", y="Referral rate")
 ```
 
-
+The visualization above tells us the change of the referral rate per 6 month. Since there are a lot of variations of the referral rate in each time interval, we can not conclude that there is an obvious increasing relationship between time and referral rate. 
 
 
 
@@ -281,13 +291,15 @@ In this part, we want to investigate if there is any difference of the referral 
 |         NA|     -     |     -     |          4|          0|          0|     -     |
 |Total      |        155|        111|         81|         58|         54|     0.3484| 
 
+Qeustion: 
 
 
 \newpage
 
 ## IV.Analysis on second opinion patients
 
-Among 65 patients who had second opinion, 3 of them still ordered the germline genetic testing.
+
+Among 65 patients who had second opinion in the data, 3 of them still ordered the germline genetic testing.
 
 ```{r, include = FALSE}
 dat_3 <- dat[dat$second_opinion == TRUE, ]
