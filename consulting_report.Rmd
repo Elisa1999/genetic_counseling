@@ -144,7 +144,7 @@ webshot("file:///Users/shicongwang/Desktop/genetic_counseling/Untitled.html" , "
 
 ### I.Cancer Stage and Genetic Counseling Referral Rate
 
-We thought that the stage of cancer might explain some of the variation in referral rate. The following stacked bar plot serves as visualization to the proportions of individuals who ordered testing given that they were diagnosed with certain stages of cancer. We only selected the patients who finally ordered genetic counseling, and labeled the numbers and percentages on each bar.The percentage can be calculated by :
+We thought that the stage of cancer might explain some of the variation in referral rate. The following stacked bar plot serves as visualization to the proportions of individuals who ordered testing given that they were diagnosed with certain stages of cancer. We only selected the patients who finally ordered genetic counseling, and labeled the numbers and percentages on each bar.The percentage can be calculated by:
 $$percentage = \frac{number \ of \ patients \ ordered \ testing}{number \ of \ patients\ in \ each \ stage}$$
 For instance, the total number of patients in fourth stage is 121, and 41 of them ordered genetic counseling, so the percentage is supposed to be 41/121=33.88%.
 
