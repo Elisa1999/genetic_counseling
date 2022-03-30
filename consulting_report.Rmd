@@ -130,35 +130,23 @@ data$`Testing Ordered2`<- ifelse(data$`Testing Ordered` == "yes", "yes",
 ### V. Proportions of individuals who proceed through each step of the process:
 The following Sankey plot illustrates how many individuals succeed (currently labeled “Accept”) at each step of the genetic counseling process. 
 
-```{r,include = FALSE}
-#library(networkD3)
-#source<- c("1st Step Accept","1st Step Accept","1st Step Reject","2nd Step Accept","2nd Step Accept","2nd Step Reject","3rd Step Accept","3rd Step Accept","3rd Step Reject","4th Step Reject")
-#target<- c("2nd Step Accept","2nd Step Reject","Rejection 1","3rd Step Accept","3rd Step Reject","Rejection 2","4th Step Accept","4th Step Reject","Rejection 3","Rejection 4")
-#value<- c(81,30,44,59,22,30,55,4,22,4)
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(webshot)
 
-#link<- data.frame(source,target,value)
+#install phantom:
+webshot::install_phantomjs()
+# Make a webshot in pdf : high quality but can not choose printed zone
+webshot("file:///Users/shicongwang/Desktop/genetic_counseling/Untitled.html" , "output.pdf", delay = 0.2)
 
-#node <- data.frame(
- #name=c(as.character(link$source), as.character(link$target)) %>% 
-    #unique()
-  #)
-
-#link$IDsource <- match(link$source, node$name)-1 
-#link$IDtarget <- match(link$target, node$name)-1
- 
-#p2 <- sankeyNetwork(Links = link, Nodes = node,
-                     #Source = "IDsource", Target = "IDtarget",
-                     #Value = "value", NodeID = "name", 
-                     #sinksRight=FALSE,fontSize=18)
-
-#p2
 ```
 
 ## II. 
 
 ### I.Cancer Stage and Genetic Counseling Referral Rate
 
-We thought that the stage of cancer might explain some of the variation in referral rate. The following stacked bar plot is an early attempt to visualize the proportions of individuals who ordered testing given that they were diagnosed with certain stages of cancer. Currently, we don’t see much of a pattern with the proportion of testing ordered and the stage, though this may be due to the fact that so many of the patients are diagnosed at stage 4 (the smaller proportions may be unreliable). If the client is interested in us exploring this, we can try other ways of visualizing this (such as adding error bars). 
+We thought that the stage of cancer might explain some of the variation in referral rate. The following stacked bar plot serves as visualization to the proportions of individuals who ordered testing given that they were diagnosed with certain stages of cancer. We only selected the patients who finally ordered genetic counseling, and labeled the numbers and percentages on each bar.The percentage can be calculated by :
+$$percentage = \frac{number \ of \ patients \ ordered \ testing}{number \ of \ patients\ in \ each \ stage}$$
+For instance, the total number of patients in fourth stage is 121, and 41 of them ordered genetic counseling, so the percentage is supposed to be 41/121=33.88%.
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 df5<- data %>%
@@ -166,26 +154,27 @@ df5<- data %>%
   arrange(`Testing Ordered`, desc(`Stage at Dx (#0-4)`)) %>% # Rearranging in stacking order  
   group_by(`Stage at Dx (#0-4)`) %>%
   mutate(Freq2 = cumsum(n), # Calculating position of stacked Freq
-         prop = 100*n/sum(n))  # Calculating proportion of Freq
+         prop = n/sum(n),
+         percentage = 100* n/sum(n))  # Calculating proportion of Freq
 
-df5$label = paste0(sprintf("%.2f", df5$prop), "%")
+df5$label = paste0(sprintf("%.2f", df5$percentage), "%")
+df5$sd<- sqrt( df5$prop*(1-df5$prop) / df5$Freq2)
 
-ggplot(df5, aes(x = `Stage at Dx (#0-4)`, y = n, fill = `Testing Ordered`)) +
-   geom_bar(position = position_stack(), stat = "identity") +
-   geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3, color="white")+
-   ylab("Frequency")+
-   xlab("Stages")
+df_5<- df5 %>% filter(`Testing Ordered`== "yes")
 
-ggplot(df5, aes(x = `Stage at Dx (#0-4)`, y = n, fill = `Testing Ordered`)) +
-   geom_bar(position = "dodge", stat = "identity") +
-   geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
-   ylab("Frequency")+
-   xlab("Stages")
+ggplot(df_5) +
+    geom_bar( aes(x=`Stage at Dx (#0-4)`, y=prop), stat="identity", fill="skyblue", alpha=0.7) +
+    geom_errorbar(aes(x=`Stage at Dx (#0-4)`, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
+    geom_text(aes(x=`Stage at Dx (#0-4)`, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
+    geom_text(aes(x=`Stage at Dx (#0-4)`, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
+    scale_y_continuous(labels = scales::percent)+
+    ylab("Percentage")+
+    xlab("Stages")
 ```
 
 ### II. ECOG and Genetic Counseling Referral Rate
 
-We were also curious about the ECOG which measured well-being.
+We were also curious about the ECOG which measured well-being. As a result, we use the same method as the previous analysis.The stacked bar plot presents the proportions of individuals who ordered testing based on the patient’s level of functioning in terms of their ability to care for themselves (ECOG Status).
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 df6<- data %>%
@@ -193,22 +182,37 @@ df6<- data %>%
   arrange(`Testing Ordered`, desc(`ECOG at Initial (#0-4)`)) %>% # Rearranging in stacking order  
   group_by(`ECOG at Initial (#0-4)`) %>%
   mutate(Freq2 = cumsum(n), # Calculating position of stacked Freq
-         prop = 100*n/sum(n))  # Calculating proportion of Freq
+         prop = n/sum(n),
+         percentage = 100* n/sum(n))  # Calculating proportion of Freq
 
-df6$label = paste0(sprintf("%.2f", df6$prop), "%")
+df6$label = paste0(sprintf("%.2f", df6$percentage), "%")
 
-ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
-   geom_bar(position = position_stack(), stat = "identity") +
-   geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3, color="white")+
-   ylab("Frequency")+
-   xlab("ECOG")
+df6$sd<- sqrt( df6$prop*(1-df6$prop) / df6$Freq2)
+
+df_6<- df6 %>% filter(`Testing Ordered`== "yes")
 
 
-ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
-   geom_bar(position = "dodge", stat = "identity") +
-   geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
-   ylab("Frequency")+
-   xlab("ECOG")
+#ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
+   #geom_bar(position = position_stack(), stat = "identity") +
+   #geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3, color="white")+
+   #ylab("Frequency")+
+   #xlab("ECOG")
+
+
+#ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
+   #geom_bar(position = "dodge", stat = "identity") +
+   #geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
+   #ylab("Frequency")+
+   #xlab("ECOG")
+
+ggplot(df_6) +
+    geom_bar( aes(x=`ECOG at Initial (#0-4)`, y=prop), stat="identity", fill="skyblue", alpha=0.7) +
+    geom_errorbar(aes(x=`ECOG at Initial (#0-4)`, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
+    geom_text(aes(x=`ECOG at Initial (#0-4)`, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
+    geom_text(aes(x=`ECOG at Initial (#0-4)`, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
+    scale_y_continuous(labels = scales::percent)+
+    ylab("Percentage")+
+    xlab("ECOG Status")
 ```
 
 
