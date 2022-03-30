@@ -143,6 +143,9 @@ webshot("file:///Users/shicongwang/Desktop/genetic_counseling/Untitled.html" , "
 
 ```
 
+
+\newpage
+
 ## II. Other Analysis
 
 ### I.Cancer Stage and Genetic Counseling Referral Rate
@@ -323,7 +326,12 @@ sum(dat_3$`Testing Ordered` == 'yes')
 \newpage
 
 ## V.Reasons for failure
+
+### I. Reasons that cause the patients with no second opinion fail to place the referral
+
 We next explore the reason that causes the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is ‘pt deferred/declined’ which is about 33%. The second most important reason should be ‘no response by call/mail’ that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by ‘never contacted’ (9%), ‘never schd’ (9%), and ‘not addressed’ (15%). 
+
+
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 dat <- read.csv("data.csv")
 df1 <- dat[c(12,14)]
@@ -351,12 +359,21 @@ ggplot(data=result1, aes(x=reasons1, y=count1)) +
 ```
 Encoding: 
 confirm: confirm dx then chose care at ECMC, workup/confirm dx;
+
 trial: phase III trial, trial screen;
+
 palliative: palliative/ supportive, recommended supportive/ palliative care, other - palliative/ supportive;
+
 testing: other - prior testing completed at Roswell (2017), other - prior testing previously completed outside;
+
 hospice: hospice, then inpatient then enrolled in hospice, other - hospice
 
+\newpage
+
+### II. Reasons that cause the patients fail to schedule genetic meeting
+
 We next explore the reason that causes the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is ‘no response by call/mail’ that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by ‘never contacted’ (9%), ‘never schd’ (9%), ‘not addressed’ (15%), 'passed' (15%'), and 'pt declined' (18%). 
+
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 df2 <- dat[c(18,19)]
@@ -382,10 +399,15 @@ ggplot(data=result2, aes(x=reasons2, y=count2)) +
 ```
 Encoding: 
 pt declined: pt deferred/not interested, pt deferred/ declined, other - pt declined x2;
+
 No response/mail: other - no response to calls/VM or mailed letter, other - no call back, inpatient to inpatient hospice;
+
 Never schd: no never schd, never seen;
+
 Not addressed: referral not addressed - active;
-Never contacted: never contacted - d/c via pt discharge
+
+Never contacted: never contacted - d/c via pt discharge;
+
 passed: pt passed before referral reviewed, pt passed before appt offered, never contacted - d/c via pt discharge;
 
 \newpage
