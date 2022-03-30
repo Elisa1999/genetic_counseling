@@ -1,7 +1,8 @@
 ---
 title: "consutling"
 author: "Zhihui Zhang 
-         Shicong Wang"
+         Shicong Wang
+         Qiannan Shen"
 date: "3/28/2022"
 output: pdf_document
 ---
@@ -319,9 +320,73 @@ sum(dat_3$`Testing Ordered` == 'yes')
 |Before     |         65|         11|          8|          6|          3|    0.04615|
 
 
+\newpage
 
+## V.Reasons for failure
+We next explore the reason that causes the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is ‘pt deferred/declined’ which is about 33%. The second most important reason should be ‘no response by call/mail’ that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by ‘never contacted’ (9%), ‘never schd’ (9%), and ‘not addressed’ (15%). 
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+dat <- read.csv("data.csv")
+df1 <- dat[c(12,14)]
 
+df1$Re1.second <- ifelse(str_detect(df1[,2], pattern = 'second'), 1, 0)
+df10 <- df1 %>% filter(Reason.No.Referral != "n/a")
+df11 <- df1 %>% filter(Reason.No.Referral != "n/a") %>% filter(Re1.second == 0)
 
+df11$Re1.confirm <- ifelse(str_detect(df11[,2], pattern = 'confirm dx'), 1, 0)
+df11$Re1.trial <- ifelse(str_detect(df11[,2], pattern = 'trial'), 1, 0)
+df11$Re1.palliative <- ifelse(str_detect(df11[,2], pattern = 'palliative'), 1, 0)
+df11$Re1.hospice <- ifelse(str_detect(df11[,2], pattern = 'hospice'), 1, 0)
+df11$Re1.testing <- ifelse(str_detect(df11[,2], pattern = 'testing'), 1, 0)
+
+count1 <- c(sum(df11[4]=="1"),sum(df11[5]=="1"),
+            sum(df11[6]=="1"),sum(df11[7]=="1"),sum(df11[8]=="1"))
+reasons1 <- c("confirm dx","trial","palliative","hospice","testing")
+result1 <- data.frame(reasons1, count1)
+
+ggplot(data=result1, aes(x=reasons1, y=count1)) +
+  geom_bar(stat="identity", col = "skyblue", fill = "skyblue")+
+  geom_text(aes(label=count1), vjust=1.6, color="white", size=3.5)+
+  theme_bw()+
+  ggtitle("Reasons that cause the patients with no second opinion fail to place the referral")
+```
+Encoding: 
+confirm: confirm dx then chose care at ECMC, workup/confirm dx;
+trial: phase III trial, trial screen;
+palliative: palliative/ supportive, recommended supportive/ palliative care, other - palliative/ supportive;
+testing: other - prior testing completed at Roswell (2017), other - prior testing previously completed outside;
+hospice: hospice, then inpatient then enrolled in hospice, other - hospice
+
+We next explore the reason that causes the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is ‘no response by call/mail’ that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by ‘never contacted’ (9%), ‘never schd’ (9%), ‘not addressed’ (15%), 'passed' (15%'), and 'pt declined' (18%). 
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+df2 <- dat[c(18,19)]
+
+df2$pt <- ifelse(str_detect(df2[,2], pattern = 'pt'), 1, 0)
+df2$no <- ifelse(str_detect(df2[,2], pattern = 'no'), 1, 0)
+df2$neverc <- ifelse(str_detect(df2[,2], pattern = 'never contacted'), 1, 0)
+df2$nevers <- ifelse(str_detect(df2[,2], pattern = 'never schd'), 1, 0)
+df2$address <- ifelse(str_detect(df2[,2], pattern = 'address'), 1, 0)
+df2$pass <- ifelse(str_detect(df2[,2], pattern = 'pass'), 1, 0)
+
+count2 <- c(sum(df2[3]=="1")-sum(df2[8]=="1"),sum(df2[4]=="1")-7,sum(df2[5]=="1"),
+            sum(df2[6]=="1"),sum(df2[7]=="1"),sum(df2[8]=="1"))
+reasons2 <- c("pt deferred/ declined ","no responses","never contancted", 
+              "never schd", "not addressed", "passed")
+result2<- data.frame(reasons2,count2)
+
+ggplot(data=result2, aes(x=reasons2, y=count2)) +
+  geom_bar(stat="identity", col = "pink", fill = "pink")+
+  geom_text(aes(label=count2), vjust=1.6, color="white", size=3.5)+
+  theme_bw() +
+  ggtitle("Reasons that cause the patients fail to schedule genetic meeting")
+```
+Encoding: 
+pt declined: pt deferred/not interested, pt deferred/ declined, other - pt declined x2;
+No response/mail: other - no response to calls/VM or mailed letter, other - no call back, inpatient to inpatient hospice;
+Never schd: no never schd, never seen;
+Not addressed: referral not addressed - active;
+Never contacted: never contacted - d/c via pt discharge
+passed: pt passed before referral reviewed, pt passed before appt offered, never contacted - d/c via pt discharge;
 
 \newpage
 
@@ -370,6 +435,5 @@ table(dat_1 %>% filter(`Initial Appt (#1-30)`> 22.2 & `# Genetics Referrals`>=1&
 
 
 table(dat_1 %>% filter(`Initial Appt (#1-30)`> 22.2 & `# Genetics Referrals`>=1&`Genetics Appt Scheduled`== 'yes'& `Attended Appt` == 'yes'&`Testing Ordered` == 'yes') %>% select(`Virtual Offered`))
-
 
 ```
