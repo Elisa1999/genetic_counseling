@@ -1,5 +1,5 @@
 ---
-title: "consutling"
+title: "Analysis of Genetic counseling among pancreatic cancer patients"
 author: "Zhihui Zhang 
          Shicong Wang
          Qiannan Shen"
@@ -32,6 +32,8 @@ The main purpose of this project is evaluating the genetic counseling and germli
 
 
 ## Data Processing 
+The dataset include 220 pancreatic patients' medical records for 30 months. The dataset contains personal information of patients, medical records as well as genetic counselling records. There are many missing values in the data. We fill some missing values based on our understanding of context. For example, the entry will be missing for the later part in genetic counselling if the patient does not have referral placed. In the further analysis part, we also divide some specific reasons into groups. The details encoding information will be shown under the table. Also, except analysis on second opinion patients, we only include 155 patients who do not have second opinions in either somatic testing or reason no referral column in the analysis.
+
 
 ```{r , include = FALSE}
 #second opinion tag 
@@ -54,10 +56,11 @@ dat_1$`Initial Appt (#1-30)`[dat_1$`Initial Appt (#1-30)`> 22 & dat_1$`Initial A
 
 ```
 
+## Summary of Analysis
 
 ## I.Referral rate and its analysis
 
-The overall referral rate is 0.3548387. There are 55 patients ordered the germline genetic test among 155 patients. We will divide the referral process into four steps and analyze the reasons of dropping of during each step.  
+The overall referral rate is 0.355. There are 55 patients ordered the germline genetic test among 155 patients. We will divide the referral process into four steps and analyze the reasons of dropping of during each step.  
 
 ### Part.I Genetic referrals placed
 
@@ -77,6 +80,8 @@ data$`Genetics Referrals`<- ifelse(data$`# Genetics Referrals` >0, "yes", "no")
 |No               |                44|   0.284|  
 |Total            |               155|   -    | 
 
+\newpage
+
 ### Part II. Genetic meeting scheduled
 ```{r,include = FALSE}
 # probability that schedule genetic meeting
@@ -91,6 +96,7 @@ data$`Genetics Appt Scheduled2`<- ifelse(data$`Genetics Appt Scheduled` == "yes"
 |Yes - Acceptance |                81|   0.730| 
 |No               |                30|   0.270|  
 |Total            |               111|   -    | 
+
 
 ### Part III. Genetic meeting attended
 ```{r,include = FALSE}
@@ -130,31 +136,30 @@ data$`Testing Ordered2`<- ifelse(data$`Testing Ordered` == "yes", "yes",
 |Total            |                59|   -    | 
 
 
-### V. Proportions of individuals who proceed through each step of the process:
+### Part V. Proportions of individuals who proceed through each step of the process:
 The following Sankey plot illustrates how many individuals succeed (currently labeled “Accept”) at each step of the genetic counseling process. 
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap= 'Proportions of patients in each step'}
 library(webshot)
 
 #install phantom:
 webshot::install_phantomjs()
 # Make a webshot in pdf : high quality but can not choose printed zone
-webshot("file:///Users/shicongwang/Desktop/genetic_counseling/Untitled.html" , "output.pdf", delay = 0.2)
-
+#webshot("file:///Users/shicongwang/Desktop/genetic_counseling/Untitled.html" , "output.pdf", delay = 0.2)
 ```
 
 
 \newpage
 
-## II. Other Analysis
+## II. Analysis of referral rate with other factors
 
-### I.Cancer Stage and Genetic Counseling Referral Rate
+### Part I.Cancer Stage and Genetic Counseling Referral Rate
 
-We thought that the stage of cancer might explain some of the variation in referral rate. The following stacked bar plot serves as visualization to the proportions of individuals who ordered testing given that they were diagnosed with certain stages of cancer. We only selected the patients who finally ordered genetic counseling, and labeled the numbers and percentages on each bar.The percentage can be calculated by:
+We think that the stage of cancer might explain some of the variation in referral rate. The following stacked bar plot serves as visualization to the proportions of individuals who ordered testing given that they were diagnosed with certain stages of cancer. We only selected the patients who finally ordered genetic counseling, and labeled the numbers and percentages on each bar.The percentage can be calculated by:
 $$percentage = \frac{number \ of \ patients \ ordered \ testing}{number \ of \ patients\ in \ each \ stage}$$
-For instance, the total number of patients in fourth stage is 121, and 41 of them ordered genetic counseling, so the percentage is supposed to be 41/121=33.88%.
+For instance, the total number of patients in fourth stage is 121, and 41 of them ordered genetic counseling, so the percentage is supposed to be $\frac{41}{121}=33.88\%$.
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap= 'Proportion of patients who order test in each cancer stage'}
 data$`Testing Ordered` <- ifelse(str_detect(data$`Testing Ordered`, 'yes'), 'yes', 'no')
 df5<- data %>%
   count(`Testing Ordered`,`Stage at Dx (#0-4)`) %>%
@@ -181,13 +186,15 @@ ggplot(df_5) +
 
 ```
 
-### II. ECOG and Referral Rate
+\newpage
 
-ECOG is an indicator of the wellness level of the patients. In the following section, we want to investigate the relationship between ECOG of patients and the referral rate. As a result, we use the same method as the previous analysis.The stacked bar plot presents the proportions of individuals who ordered testing based on the patient’s level of functioning in terms of their ability to care for themselves (ECOG Status).
+### Part II. ECOG and Referral Rate
+
+ECOG is an indicator of the wellness level of the patients. In the following section, we want to investigate the relationship between ECOG of patients and the referral rate. As a result, we use the same method as the previous analysis. The stacked bar plot presents the proportions of individuals who ordered testing based on the patient’s level of functioning in terms of their ability to care for themselves (ECOG Status).
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 
-df6<- data %>%
+df6 <- data %>%
   count(`Testing Ordered`,`ECOG at Initial (#0-4)`) %>%
   arrange(`Testing Ordered`, desc(`ECOG at Initial (#0-4)`)) %>% # Rearranging in stacking order  
   group_by(`ECOG at Initial (#0-4)`) %>%
@@ -214,6 +221,9 @@ df_6<- df6 %>% filter(`Testing Ordered`== "yes")
    #ylab("Frequency")+
    #xlab("ECOG")
 
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of patients who order test in each ECOG level'}
 ggplot(df_6) +
     geom_bar( aes(x=`ECOG at Initial (#0-4)`, y=prop), stat="identity", fill="skyblue", alpha=0.7) +
     geom_errorbar(aes(x=`ECOG at Initial (#0-4)`, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
@@ -223,7 +233,7 @@ ggplot(df_6) +
     ylab("Percentage")+
     xlab("ECOG Status")
 ```
-
+\newpage
 
 ## III. Change of referral rate
 
@@ -241,7 +251,7 @@ dat_2$cut_6 <- cut(dat_2$`Initial Appt (#1-30)`, c(1, seq(6, 30, by=6)), include
 ```
 
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap= 'Referral rate change per 3 month'}
 dat1 <- dat_2 %>% group_by(`Initial Appt (#1-30)`,cut_3) %>%
   summarize(referral_rate= sum(test)/ n(), cut_3) %>% distinct()
 
@@ -258,9 +268,11 @@ ggplot(dat1 , aes(x = cut_3, y = referral_rate)) +
   labs(title="Referral rate change per 3 month", x="Month", y="Referral rate")
 ```
 
-The plot above shows us the trend of referral rate using 3 month as a period.We jitter the points to avoid overlaps. The plot above does not indicate there is any increasing or decreasing trend. 
+The figure above shows us the trend of referral rate using 3 month as a period.We jitter the points to avoid overlaps. The plot above does not indicate there is any increasing or decreasing trend. 
 
-```{r echo=FALSE, message=FALSE}
+\newpage
+
+```{r echo=FALSE, message=FALSE, fig.cap= 'Referral rate change per 6 month'}
 dat_2$cut_6 <- cut(dat_2$`Initial Appt (#1-30)`, c(1, seq(6, 30, by=6)), include.lowest = T) 
 
 dat1 <- dat_2 %>% group_by(`Initial Appt (#1-30)`,cut_6) %>%
@@ -285,7 +297,7 @@ The visualization above tells us the change of the referral rate per 6 month. Si
 
 \newpage
 
-## III.Virtual/Teleheath Impact
+## IV.Virtual/Teleheath Impact
 
 In this part, we want to investigate if there is any difference of the referral rate before and after telehealth is provided as an preference options for the patients. 
 
@@ -298,12 +310,13 @@ In this part, we want to investigate if there is any difference of the referral 
 |         NA|     -     |     -     |          4|          0|          0|     -     |
 |Total      |        155|        111|         81|         58|         54|     0.3484| 
 
-Qeustion: 
 
 
 \newpage
 
-## IV.Analysis on second opinion patients
+## V. Further analysis
+
+### Part I.Analysis on second opinion patients
 
 
 Among 65 patients who had second opinion in the data, 3 of them still ordered the germline genetic testing.
@@ -323,16 +336,15 @@ sum(dat_3$`Testing Ordered` == 'yes')
 |Before     |         65|         11|          8|          6|          3|    0.04615|
 
 
-\newpage
 
-## V.Reasons for failure
+### Part II.Reasons for failure
 
-### I. Reasons that cause the patients with no second opinion fail to place the referral
+#### 1.Reasons that cause the patients with no second opinion fail to place the referral
 
-We next explore the reason that causes the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is ‘pt deferred/declined’ which is about 33%. The second most important reason should be ‘no response by call/mail’ that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by ‘never contacted’ (9%), ‘never schd’ (9%), and ‘not addressed’ (15%). 
+We next explore the reason that causes the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is 'pt deferred/declined' which is about 33%. The second most important reason should be ‘no response by call/mail’ that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by ‘never contacted’ (9%), 'never schd' (9%), and 'not addressed' (15%). 
 
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap = 'Reasons that cause the patients who fail to place the referral'}
 dat <- read.csv("data.csv")
 df1 <- dat[c(12,14)]
 
@@ -355,27 +367,17 @@ ggplot(data=result1, aes(x=reasons1, y=count1)) +
   geom_bar(stat="identity", col = "skyblue", fill = "skyblue")+
   geom_text(aes(label=count1), vjust=1.6, color="white", size=3.5)+
   theme_bw()+
-  ggtitle("Reasons that cause the patients with no second opinion fail to place the referral")
+  ggtitle("Reasons that cause the patients who fail to place the referral")
 ```
-Encoding: 
-confirm: confirm dx then chose care at ECMC, workup/confirm dx;
-
-trial: phase III trial, trial screen;
-
-palliative: palliative/ supportive, recommended supportive/ palliative care, other - palliative/ supportive;
-
-testing: other - prior testing completed at Roswell (2017), other - prior testing previously completed outside;
-
-hospice: hospice, then inpatient then enrolled in hospice, other - hospice
 
 \newpage
 
-### II. Reasons that cause the patients fail to schedule genetic meeting
+#### 2.Reasons that cause the patients fail to schedule genetic meeting
 
-We next explore the reason that causes the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is ‘no response by call/mail’ that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by ‘never contacted’ (9%), ‘never schd’ (9%), ‘not addressed’ (15%), 'passed' (15%'), and 'pt declined' (18%). 
+We next explore the reason that causes the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is 'no response by call/mail' that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by ‘never contacted’ (9%), ‘never schd’ (9%), 'not addressed' (15%), 'passed' (15%'), and 'pt declined' (18%). 
 
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap = 'Reasons that cause the patients who fail to schedule genetic meeting'}
 df2 <- dat[c(18,19)]
 
 df2$pt <- ifelse(str_detect(df2[,2], pattern = 'pt'), 1, 0)
@@ -397,6 +399,27 @@ ggplot(data=result2, aes(x=reasons2, y=count2)) +
   theme_bw() +
   ggtitle("Reasons that cause the patients fail to schedule genetic meeting")
 ```
+
+
+\newpage
+
+## Appendix
+In the appendix part, we include the code about how we calculate the ratio above. And here are the encoding method for the plot aboves.
+
+### 1. Encoding method for Figure 6
+Encoding: 
+confirm: confirm dx then chose care at ECMC, workup/confirm dx;
+
+trial: phase III trial, trial screen;
+
+palliative: palliative/ supportive, recommended supportive/ palliative care, other - palliative/ supportive;
+
+testing: other - prior testing completed at Roswell (2017), other - prior testing previously completed outside;
+
+hospice: hospice, then inpatient then enrolled in hospice, other - hospice
+
+
+### 1. Encoding method for Figure 7
 Encoding: 
 pt declined: pt deferred/not interested, pt deferred/ declined, other - pt declined x2;
 
@@ -410,9 +433,7 @@ Never contacted: never contacted - d/c via pt discharge;
 
 passed: pt passed before referral reviewed, pt passed before appt offered, never contacted - d/c via pt discharge;
 
-\newpage
 
-## Appendix
 ```{r include = FALSE}
 #overall referral rate
 sum(dat_1$test)/length(dat_1$test)
