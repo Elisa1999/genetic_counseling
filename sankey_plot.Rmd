@@ -1,0 +1,43 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r , include = FALSE}
+#package we use
+library(readr)
+library(stringr)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+```
+
+ 
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(networkD3)
+source<- c("1st Step Accept","1st Step Accept","1st Step Reject","2nd Step Accept","2nd Step Accept","2nd Step Reject","3rd Step Accept","3rd Step Accept","3rd Step Reject","4th Step Reject")
+target<- c("2nd Step Accept","2nd Step Reject","Rejection 1","3rd Step Accept","3rd Step Reject","Rejection 2","4th Step Accept","4th Step Reject","Rejection 3","Rejection 4")
+value<- c(81,30,44,59,22,30,55,4,22,4)
+
+link<- data.frame(source,target,value)
+
+node <- data.frame(
+ name=c(as.character(link$source), as.character(link$target)) %>% 
+    unique()
+  )
+
+link$IDsource <- match(link$source, node$name)-1 
+link$IDtarget <- match(link$target, node$name)-1
+
+p2 <- sankeyNetwork(Links = link, Nodes = node,
+                     Source = "IDsource", Target = "IDtarget",
+                     Value = "value", NodeID = "name", 
+                     sinksRight=FALSE,fontSize=13)
+
+p2
+```
+
+
