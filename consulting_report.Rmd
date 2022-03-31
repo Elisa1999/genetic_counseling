@@ -145,7 +145,7 @@ library(webshot)
 #install phantom:
 webshot::install_phantomjs()
 # Make a webshot in pdf : high quality but can not choose printed zone
-#webshot("file:///Users/shicongwang/Desktop/genetic_counseling/Untitled.html" , "output.pdf", delay = 0.2)
+webshot("file:///Users/shicongwang/Desktop/genetic_counseling/sankey_plot.html" , "output.pdf", delay = 0.2)
 ```
 
 
@@ -192,7 +192,7 @@ ggplot(df_5) +
 
 ECOG is an indicator of the wellness level of the patients. In the following section, we want to investigate the relationship between ECOG of patients and the referral rate. As a result, we use the same method as the previous analysis. The stacked bar plot presents the proportions of individuals who ordered testing based on the patient’s level of functioning in terms of their ability to care for themselves (ECOG Status).
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of patients who order test in each ECOG level'}
 
 df6 <- data %>%
   count(`Testing Ordered`,`ECOG at Initial (#0-4)`) %>%
@@ -221,9 +221,6 @@ df_6<- df6 %>% filter(`Testing Ordered`== "yes")
    #ylab("Frequency")+
    #xlab("ECOG")
 
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of patients who order test in each ECOG level'}
 ggplot(df_6) +
     geom_bar( aes(x=`ECOG at Initial (#0-4)`, y=prop), stat="identity", fill="skyblue", alpha=0.7) +
     geom_errorbar(aes(x=`ECOG at Initial (#0-4)`, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
@@ -233,6 +230,7 @@ ggplot(df_6) +
     ylab("Percentage")+
     xlab("ECOG Status")
 ```
+
 \newpage
 
 ## III. Change of referral rate
@@ -479,4 +477,19 @@ table(dat_1 %>% filter(`Initial Appt (#1-30)`> 22.2 & `# Genetics Referrals`>=1&
 
 table(dat_1 %>% filter(`Initial Appt (#1-30)`> 22.2 & `# Genetics Referrals`>=1&`Genetics Appt Scheduled`== 'yes'& `Attended Appt` == 'yes'&`Testing Ordered` == 'yes') %>% select(`Virtual Offered`))
 
+```
+
+### 2. More stacked bar plots
+```{r echo=FALSE, message=FALSE}
+ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
+   geom_bar(position = position_stack(), stat = "identity") +
+   geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3, color="white")+
+   ylab("Frequency")+
+   xlab("ECOG")
+
+ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
+   geom_bar(position = "dodge", stat = "identity") +
+   geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
+   ylab("Frequency")+
+   xlab("ECOG")
 ```
