@@ -37,7 +37,7 @@ p2 <- sankeyNetwork(Links = link, Nodes = node,
                      Value = "value", NodeID = "name", 
                      sinksRight=FALSE,fontSize=13)
 
-p2
+p2 
 ```
 
 
