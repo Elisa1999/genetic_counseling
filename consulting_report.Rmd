@@ -1,8 +1,6 @@
 ---
-title: "Analysis of Genetic counseling among pancreatic cancer patients"
-author: "Zhihui Zhang 
-         Shicong Wang
-         Qiannan Shen"
+title: "Analysis of Genetic Counseling among Pancreatic Cancer Patients"
+author: "Zhihui Zhang, Shicong Wang, Qiannan Shen"
 date: "3/28/2022"
 output: pdf_document
 ---
@@ -135,6 +133,7 @@ data$`Testing Ordered2`<- ifelse(data$`Testing Ordered` == "yes", "yes",
 |No               |                 4|   0.068|  
 |Total            |                59|   -    | 
 
+\newpage
 
 ### Part V. Proportions of individuals who proceed through each step of the process:
 The following Sankey plot illustrates how many individuals succeed (currently labeled “Accept”) at each step of the genetic counseling process. 
@@ -145,7 +144,7 @@ library(webshot)
 #install phantom:
 webshot::install_phantomjs()
 # Make a webshot in pdf : high quality but can not choose printed zone
-webshot("file:///Users/shicongwang/Desktop/genetic_counseling/sankey_plot.html" , "output.pdf", delay = 0.2)
+webshot("sankey_plot.html" , "output.pdf", delay = 0.2)
 ```
 
 
@@ -417,7 +416,7 @@ testing: other - prior testing completed at Roswell (2017), other - prior testin
 hospice: hospice, then inpatient then enrolled in hospice, other - hospice
 
 
-### 1. Encoding method for Figure 7
+### 2. Encoding method for Figure 7
 Encoding: 
 pt declined: pt deferred/not interested, pt deferred/ declined, other - pt declined x2;
 
@@ -479,14 +478,16 @@ table(dat_1 %>% filter(`Initial Appt (#1-30)`> 22.2 & `# Genetics Referrals`>=1&
 
 ```
 
-### 2. More stacked bar plots
-```{r echo=FALSE, message=FALSE}
+### 3. More stacked bar plots
+```{r echo=FALSE, message=FALSE, fig.cap= 'Propotion of patients who order tests in each ECOG level'}
 ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
    geom_bar(position = position_stack(), stat = "identity") +
    geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3, color="white")+
    ylab("Frequency")+
    xlab("ECOG")
 
+```
+```{r echo=FALSE, message=FALSE, fig.cap= 'Propotion of patients who order tests in each ECOG level'}
 ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
    geom_bar(position = "dodge", stat = "identity") +
    geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
