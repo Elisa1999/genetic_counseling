@@ -338,7 +338,8 @@ sum(dat_3$`Testing Ordered` == 'yes')
 
 #### 1.Reasons that cause the patients with no second opinion fail to place the referral
 
-We next explore the reason that causes the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is 'pt deferred/declined' which is about 33%. The second most important reason should be ‘no response by call/mail’ that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by ‘never contacted’ (9%), 'never schd' (9%), and 'not addressed' (15%). 
+The following bar plots provide simple counts of the number of individuals who listed certain reasons for failing to schedule genetic meetings or place the referral. 
+We firstly separate the patients who fail to place the referrals into two subsets based on whether the failure reason is caused by the second opinion. As result has shown, the number of patients that have a second opinion is 53 and the resting is 48. Then we further study the reasons for the subset that patients don’t have a second opinion. The bar plot below illustrates the reason that causes patients with no second opinion to fail to place the referral. The main reason is ‘hospice’ (31%). And there are about 8 patients (17%) who fail because of ‘screen trials/phase III trials’. The resting patients fail to place the referrals caused by ‘confirm dx’, ‘palliative’, and ‘testing’ (around 10%). 
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap = 'Reasons that cause the patients who fail to place the referral'}
