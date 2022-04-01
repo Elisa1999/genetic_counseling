@@ -1,8 +1,6 @@
 ---
-title: "Analysis of Genetic counseling among pancreatic cancer patients"
-author: "Zhihui Zhang 
-         Shicong Wang
-         Qiannan Shen"
+title: "Analysis of Genetic Counseling among Pancreatic Cancer Patients"
+author: "Zhihui Zhang, Shicong Wang, Qiannan Shen"
 date: "3/28/2022"
 output: pdf_document
 ---
@@ -136,6 +134,7 @@ data$`Testing Ordered2`<- ifelse(data$`Testing Ordered` == "yes", "yes",
 |No               |                 4|   0.068|  
 |Total            |                59|   -    | 
 
+\newpage
 
 ### Part V. Proportions of individuals who proceed through each step of the process:
 The following Sankey plot illustrates how many individuals succeed (currently labeled “Accept”) at each step of the genetic counseling process. 
@@ -146,7 +145,7 @@ library(webshot)
 #install phantom:
 webshot::install_phantomjs()
 # Make a webshot in pdf : high quality but can not choose printed zone
-webshot("file:///Users/shicongwang/Desktop/genetic_counseling/sankey_plot.html" , "output.pdf", delay = 0.2)
+webshot("sankey_plot.html" , "output.pdf", delay = 0.2)
 ```
 
 
@@ -340,7 +339,12 @@ sum(dat_3$`Testing Ordered` == 'yes')
 
 #### 1.Reasons that cause the patients with no second opinion fail to place the referral
 
+<<<<<<< HEAD
 We next explore the reasons that cause the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is 'pt deferred/declined' which is about 33%. The second most important reason should be 'no response by call/mail' that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by 'never contacted' (9%), 'never schd' (9%), and 'not addressed' (15%). 
+=======
+The following bar plots provide simple counts of the number of individuals who listed certain reasons for failing to schedule genetic meetings or place the referral. 
+We firstly separate the patients who fail to place the referrals into two subsets based on whether the failure reason is caused by the second opinion. As result has shown, the number of patients that have a second opinion is 53 and the resting is 48. Then we further study the reasons for the subset that patients don’t have a second opinion. The bar plot below illustrates the reason that causes patients with no second opinion to fail to place the referral. The main reason is ‘hospice’ (31%). And there are about 8 patients (17%) who fail because of ‘screen trials/phase III trials’. The resting patients fail to place the referrals caused by ‘confirm dx’, ‘palliative’, and ‘testing’ (around 10%). 
+>>>>>>> 433cd3f52577169ed4b24ddad2c21074c041c3ef
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap = 'Reasons that cause the patients who fail to place the referral'}
@@ -481,6 +485,7 @@ table(dat_1 %>% filter(`Initial Appt (#1-30)`> 22.2 & `# Genetics Referrals`>=1&
 ```
 
 ### 3. More stacked bar plots
+<<<<<<< HEAD
 
 Figure.8 contains both of acceptance and rejection groups of patients who ordered testing diagnosed with different stages of cancer. The numbers and percentages on bars are same with the previous corresponded bar plots. And Figure.9 presents the relationship among patients in diversity of ECOG status and the referral rates in acceptance and rejection groups.
 
@@ -507,12 +512,22 @@ ggarrange(p4 , p3, ncol = 1, nrow = 2)
 
 
 p1 <- ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
+=======
+```{r echo=FALSE, message=FALSE, fig.cap= 'Propotion of patients who order tests in each ECOG level'}
+ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
+>>>>>>> 433cd3f52577169ed4b24ddad2c21074c041c3ef
    geom_bar(position = position_stack(), stat = "identity") +
    geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3, color="white")+
    ylab("Frequency")+
    xlab("ECOG")
 
+<<<<<<< HEAD
 p2 <- ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
+=======
+```
+```{r echo=FALSE, message=FALSE, fig.cap= 'Propotion of patients who order tests in each ECOG level'}
+ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
+>>>>>>> 433cd3f52577169ed4b24ddad2c21074c041c3ef
    geom_bar(position = "dodge", stat = "identity") +
    geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
    ylab("Frequency")+
