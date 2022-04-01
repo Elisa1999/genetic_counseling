@@ -19,6 +19,7 @@ library(stringr)
 library(ggplot2)
 library(dplyr)
 library(stringr)
+library(ggpubr)
 ```
 
 
@@ -266,7 +267,7 @@ ggplot(dat1 , aes(x = cut_3, y = referral_rate)) +
   labs(title="Referral rate change per 3 month", x="Month", y="Referral rate")
 ```
 
-The figure above shows us the trend of referral rate using 3 month as a period.We jitter the points to avoid overlaps. The plot above does not indicate there is any increasing or decreasing trend. 
+The figure above shows us the trend of referral rate using 3 month as a period. We jitter the points to avoid overlaps. The plot above does not indicate there is any increasing or decreasing trend. 
 
 \newpage
 
@@ -339,7 +340,7 @@ sum(dat_3$`Testing Ordered` == 'yes')
 
 #### 1.Reasons that cause the patients with no second opinion fail to place the referral
 
-We next explore the reason that causes the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is 'pt deferred/declined' which is about 33%. The second most important reason should be ‘no response by call/mail’ that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by ‘never contacted’ (9%), 'never schd' (9%), and 'not addressed' (15%). 
+We next explore the reasons that cause the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is 'pt deferred/declined' which is about 33%. The second most important reason should be 'no response by call/mail' that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by 'never contacted' (9%), 'never schd' (9%), and 'not addressed' (15%). 
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap = 'Reasons that cause the patients who fail to place the referral'}
@@ -372,7 +373,7 @@ ggplot(data=result1, aes(x=reasons1, y=count1)) +
 
 #### 2.Reasons that cause the patients fail to schedule genetic meeting
 
-We next explore the reason that causes the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is 'no response by call/mail' that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by ‘never contacted’ (9%), ‘never schd’ (9%), 'not addressed' (15%), 'passed' (15%'), and 'pt declined' (18%). 
+We next explore the reason that causes the patients to fail to schedule genetic meetings and the bar plot shown below. The graph shows that the main reason is 'no response by call/mail' that about 9 patients (27%) fail due to this reason. The resting patients fail to schedule genetic meetings caused by 'never contacted' (9%), 'never schd' (9%), 'not addressed' (15%), 'passed' (15%'), and 'pt declined' (18%). 
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap = 'Reasons that cause the patients who fail to schedule genetic meeting'}
@@ -402,7 +403,7 @@ ggplot(data=result2, aes(x=reasons2, y=count2)) +
 \newpage
 
 ## Appendix
-In the appendix part, we include the code about how we calculate the ratio above. And here are the encoding method for the plot aboves.
+In the appendix part, we include the code about how we calculate the ratio above. And here are the encoding method for the plots aboves.
 
 ### 1. Encoding method for Figure 6
 Encoding: 
@@ -417,7 +418,7 @@ testing: other - prior testing completed at Roswell (2017), other - prior testin
 hospice: hospice, then inpatient then enrolled in hospice, other - hospice
 
 
-### 1. Encoding method for Figure 7
+### 2. Encoding method for Figure 7
 Encoding: 
 pt declined: pt deferred/not interested, pt deferred/ declined, other - pt declined x2;
 
@@ -479,17 +480,45 @@ table(dat_1 %>% filter(`Initial Appt (#1-30)`> 22.2 & `# Genetics Referrals`>=1&
 
 ```
 
-### 2. More stacked bar plots
-```{r echo=FALSE, message=FALSE}
-ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
+### 3. More stacked bar plots
+
+The bar plots below contains both of acceptance and rejection groups of patients who ordered testing diagnosed with different stages of cancer. The numbers and percentages on bars are same with the previous corresponded bar plots. And the bar plots below presents the relationship among patients in diversity of ECOG status and the referral rates in acceptance and rejection groups.
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap = 'Proportion of patients who order test in each cancer stage', fig.height = 7, fig.width= 6}
+p4 <- ggplot(df5, aes(x = `Stage at Dx (#0-4)`, y = n, fill = `Testing Ordered`)) +
+   geom_bar(position = position_stack(), stat = "identity") +
+   geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3, color="white")+
+   ylab("Frequency")+
+   xlab("stages")
+
+p3 <- ggplot(df5, aes(x = `Stage at Dx (#0-4)`, y = n, fill = `Testing Ordered`)) +
+   geom_bar(position = "dodge", stat = "identity") +
+   geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
+   ylab("Frequency")+
+   xlab("stages")
+
+ggarrange(p4 , p3, ncol = 1, nrow = 2)
+
+```
+
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap = 'Proportions of patients who order test in each ECOG level', fig.height = 7, fig.width= 6}
+
+
+p1 <- ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
    geom_bar(position = position_stack(), stat = "identity") +
    geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3, color="white")+
    ylab("Frequency")+
    xlab("ECOG")
 
-ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
+p2 <- ggplot(df6, aes(x = `ECOG at Initial (#0-4)`, y = n, fill = `Testing Ordered`)) +
    geom_bar(position = "dodge", stat = "identity") +
    geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
    ylab("Frequency")+
    xlab("ECOG")
+
+ggarrange(p1 , p2, ncol = 1, nrow = 2)
 ```
+
+
