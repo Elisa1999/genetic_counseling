@@ -60,7 +60,9 @@ dat_1$`Initial Appt (#1-30)`[dat_1$`Initial Appt (#1-30)`> 22 & dat_1$`Initial A
 
 ## I. Analysis on Referral Rate 
 
-The overall referral rate is 35.5%. There were 55 patients who ordered the germline genetic test among 155 patients. We will divide the referral process into four steps and analyze the reasons for dropping off during each step in later analysis.  
+The overall referral rate is 35.5%. There were 55 patients who ordered the germline genetic test among 155 patients. We will divide the referral process into four steps and analyze the reasons for dropping off during each step in later analysis. 
+
+$$ Referral \ rate = \frac{number \ of \ patients \ ordered \ testing}{total \ number \ of \ patients}$$
 
 \newpage
 
@@ -168,7 +170,7 @@ webshot("sankey_plot.html" , file = "output.pdf", delay = 0.2)
 
 ## II. Analysis of Referral Rate with Other Factors
 
-### Part I.Cancer Stage and Genetic Counseling Referral Rate
+### Part I.Cancer Stage and Referral Rate
 
 We think that the stage of cancer might explain some of the variations in referral rate. The following stacked bar plot serves as a visualization of the proportions of individuals who ordered testing given that they were diagnosed with certain stages of cancer. We only selected the patients who finally ordered genetic counseling and labeled the numbers and percentages on each bar.The percentage can be calculated by:
 $$percentage = \frac{number \ of \ patients \ ordered \ testing}{number \ of \ patients\ in \ each \ stage}$$
