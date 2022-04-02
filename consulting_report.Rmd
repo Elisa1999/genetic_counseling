@@ -1,9 +1,7 @@
 ---
-title: "Analysis of Genetic counseling among pancreatic cancer patients"
-author: "Zhihui Zhang 
-         Shicong Wang
-         Qiannan Shen"
-date: "3/28/2022"
+title: "Analysis of Genetic Counseling among Pancreatic Cancer Patients"
+author: "Zhihui Zhang, Shicong Wang, Qiannan Shen"
+date: "04/01/2022"
 output: pdf_document
 ---
 
