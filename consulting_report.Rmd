@@ -62,7 +62,8 @@ dat_1$`Initial Appt (#1-30)`[dat_1$`Initial Appt (#1-30)`> 22 & dat_1$`Initial A
 
 The overall referral rate is 35.5%. There were 55 patients who ordered the germline genetic test among 155 patients. We will divide the referral process into four steps and analyze the reasons for dropping off during each step in later analysis. 
 
-$$ Referral \ rate = \frac{number \ of \ patients \ ordered \ testing}{total \ number \ of \ patients}$$
+$$ Referral \ rate = \frac{number \ of \ patients \ who\  ordered \ the
+\ tests}{total \ number \ of \ patients}$$
 
 \newpage
 
@@ -173,7 +174,7 @@ webshot("sankey_plot.html" , file = "output.pdf", delay = 0.2)
 ### Part I.Cancer Stage and Referral Rate
 
 We think that the stage of cancer might explain some of the variations in referral rate. The following stacked bar plot serves as a visualization of the proportions of individuals who ordered testing given that they were diagnosed with certain stages of cancer. We only selected the patients who finally ordered genetic counseling and labeled the numbers and percentages on each bar.The percentage can be calculated by:
-$$percentage = \frac{number \ of \ patients \ ordered \ testing}{number \ of \ patients\ in \ each \ stage}$$
+$$percentage = \frac{number \ of \ patients \ who \ ordered \ the \ tests }{number \ of \ patients\ in \ each \ stage}$$
 For instance, the total number of patients in fourth stage is 121, and 41 of them have ordered genetic counseling, so the percentage is supposed to be $\frac{41}{121}=33.88\%$.
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap= 'Proportion of Patients Who Ordered Tests in each Cancer Stage'}
@@ -314,7 +315,7 @@ The visualization above tells us the change in the referral rate per 6 months. S
 
 ## IV.Virtual/Teleheath Impact
 
-In this part, we want to investigate if there is any difference in the referral rate before and after telehealth is provided as a preferred option for the patients. After two options are offered, which corresponds to the 'After' row, the referral rate is 48.6%. The number of patients who preferred telehealth versus those who preferred in-person meetings is the entry in the row 'Telehealth' and 'In-person.
+In this part, we want to investigate if there is any difference in the referral rate before and after telehealth is provided as a preferred option for the patients. After two options are offered, which corresponds to the 'After' row, the referral rate is $\frac{17}{35} = 48.6\%$ while the referral rate is $\frac{37}{120}=30.8\%$ before. The number of patients who preferred telehealth versus those who preferred in-person meetings is the entry in the row 'Telehealth' and 'In-person.
 
 |Period|Total number of patients|Number of patients who placed a referral|Number of Patients who scheduled a meeting|Number of patients who attended the meeting|Number of Patients who ordered the test|Referral rate|
 |----------:|----------:|----------:|----------:|----------:|----------:|----------:|
