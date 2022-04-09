@@ -74,6 +74,7 @@ binnedplot(fitted(model1),
            cex.pts = 0.8, 
            col.pts = 1, 
            col.int = "gray")
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

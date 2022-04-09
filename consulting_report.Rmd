@@ -161,6 +161,7 @@ The following Sankey plot illustrates how many individuals succeed (currently la
 webshot::install_phantomjs()
 # Make a webshot in pdf : high quality but can not choose printed zone
 webshot("sankey_plot.html" , file = "output.pdf", delay = 0.2)
+
 ```
 
 
@@ -421,6 +422,7 @@ ggplot(data=result2, aes(x=reasons2, y=count2)) +
 We consider to use logistic regression model since the the outcome is binary.
 
 ```{r}
+
 data$`Ethnicity/ Ancestry_rank`<- ifelse(data$`Ethnicity/ Ancestry` == "asian indian ", 0,
                                       ifelse(data$`Ethnicity/ Ancestry` =="not reported", 1,
                                              ifelse(data$`Ethnicity/ Ancestry` == "black", 3, 4)))
@@ -430,6 +432,10 @@ at Birth (m/f)` == "female", 0, 1)
 data$`Genetics Referrals`<- ifelse (data$`Genetics Referrals` == "yes", 1, 0)
 
 data$`Ethnicity/ Ancestry`<- ifelse(data$`Ethnicity/ Ancestry` == "white", "white", "not white")
+
+getwd()
+
+write.csv(data,"/Users/shicongwang/Desktop/676/genetic_counseling/data_model.csv")
 
 ```
 
