@@ -55,7 +55,6 @@ dat_1$`Ethnicity/ Ancestry`<- ifelse(dat_1$`Ethnicity/ Ancestry` == "white", "wh
 
 model1 <- glm(`Genetics Referrals` ~ `Stage at Dx (#0-4)` + `ECOG at Initial (#0-4)` + `Age at Dx (#)` + `Ethnicity/ Ancestry` + `Sex Assigned
 at Birth (m/f)` , family = "binomial", data = dat_1)
-
 summary(model1)
 ```
 
