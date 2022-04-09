@@ -161,7 +161,6 @@ The following Sankey plot illustrates how many individuals succeed (currently la
 webshot::install_phantomjs()
 # Make a webshot in pdf : high quality but can not choose printed zone
 webshot("sankey_plot.html" , file = "output.pdf", delay = 0.2)
-
 ```
 
 
