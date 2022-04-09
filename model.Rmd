@@ -1,0 +1,79 @@
+---
+title: "logistic regression model"
+author: "Shicong Wang"
+date: "4/8/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r , include = FALSE}
+#package we use
+library(readr)
+library(stringr)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+library(ggpubr)
+library(webshot)
+```
+
+```{r , include = FALSE}
+dat <- read_csv('data.csv')
+#second opinion tag 
+
+dat$second_opinion <- str_detect(dat$`Reason No Referral`, pattern = 'second opinion') | str_detect(dat$`Somatic Testing
+(y,n,other)`, pattern = 'second opinion')
+
+#number of patients with second opinion
+#sum(dat$second_opinion)
+
+#the data we will use for the further analysis(exclude patients with second opinion)
+dat_1 <- dat[dat$second_opinion == FALSE,]
+
+#referral rate = ordered test / total number
+#re-encoding 
+dat_1$test <- ifelse(str_detect(dat_1$`Testing Ordered`, pattern = 'yes'), 1, 0)
+
+#referral rate through time 
+dat_1$`Initial Appt (#1-30)`[dat_1$`Initial Appt (#1-30)`> 15 & dat_1$`Initial Appt (#1-30)`< 16]  <- 15
+dat_1$`Initial Appt (#1-30)`[dat_1$`Initial Appt (#1-30)`> 22 & dat_1$`Initial Appt (#1-30)`< 23]  <- 22
+
+dat_1$`Genetics Referrals`<- ifelse(dat_1$`# Genetics Referrals` >0, "yes", "no")
+```
+
+
+## model
+
+We consider to use logistic regression model since the the outcome is binary.
+
+```{r}
+dat_1$`Genetics Referrals`<- ifelse (dat_1$`Genetics Referrals` == "yes", 1, 0)
+dat_1$`Ethnicity/ Ancestry`<- ifelse(dat_1$`Ethnicity/ Ancestry` == "white", "white", "not white")
+
+model1 <- glm(`Genetics Referrals` ~ `Stage at Dx (#0-4)` + `ECOG at Initial (#0-4)` + `Age at Dx (#)` + `Ethnicity/ Ancestry` + `Sex Assigned
+at Birth (m/f)` , family = "binomial", data = dat_1)
+
+summary(model1)
+```
+
+## Diagnosisted Plots
+
+### Binned residual plot
+
+```{r}
+library(arm)
+library(MASS)
+binnedplot(fitted(model1), 
+           residuals(model1, type = "response"), 
+           xlab = "Expected Values", 
+           ylab = "Average residual", 
+           main = "Binned residual plot",
+           cex.pts = 0.8, 
+           col.pts = 1, 
+           col.int = "gray")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
