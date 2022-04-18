@@ -151,6 +151,7 @@ at Birth (m/f)`, y=prop,label = label), position = position_stack(vjust = 0.3), 
     xlab("Sex assigned at birth") 
 ```
 \newpage
+
 ### 4. Ethnicity
 
 Since some ethnicity only contain few observations, we divide the race into white and not white and use as the new variable. And the figure below does not show that there is an obvious relationship between race and
@@ -184,7 +185,6 @@ ggplot(df_8) +
 ```
 
 ### 5. Age
-
 
 We divide Age into groups using quantiles. The first group contains patients from 32 to 62 years old. And  the second group contains patients aged from 62 to 68. And the third group include patients from 68 to 75.5 years old. And the last group include patients whose age are in the 4th quantile. 
 
@@ -266,11 +266,18 @@ summary(model3)
 ```
 
 None of the variables are associated with the processing of getting referral from GIM. 
-## Diagnosisted Plots
+
+\newpage
+
+## Diagnostic Plot
+The diagnostic plot can be used to measure the goodness of fit of the model. 
 
 ### Binned residual plot
 
-```{r}
+The binned residual plot can assess the overall fit of regression models for binary outcomes. Since most of points are within the grey line and there is no obvious pattern for the points, the model does not have much problem. 
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Binned residual plot for full model'}
 binnedplot(fitted(model1), 
            residuals(model1, type = "response"), 
            xlab = "Expected Values", 
@@ -280,3 +287,5 @@ binnedplot(fitted(model1),
            col.pts = 1, 
            col.int = "gray")
 ```
+
+
