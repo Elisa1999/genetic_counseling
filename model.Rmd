@@ -1,5 +1,5 @@
 ---
-title: "logistic regression model"
+title: "Relationship between cancer stage, ECOG level and referral rate"
 author: "Elisa Zhang, Shicong Wang"
 date: "4/8/2022"
 output: pdf_document
