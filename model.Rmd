@@ -49,6 +49,13 @@ dat_1$`Ethnicity/ Ancestry`<- ifelse(dat_1$`Ethnicity/ Ancestry` == "white", "wh
 
 ### 1. Cancer Stage
 
+```{r include = FALSE, echo = FALSE}
+# average referral rate
+avg_referral <- mean(dat_1$`Genetics Referrals` == 'yes')
+#se
+sqrt(avg_referral*(1-avg_referral)/nrow(dat_1))
+```
+
 The figure below illustrates the relationship between referral rate and cancer stages. There are many overlaps among error bars. The cancer stage might not be related to the referral rate. 
 
 
@@ -72,6 +79,9 @@ ggplot(df_5) +
     geom_errorbar(aes(x=`Stage at Dx (#0-4)`, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
     geom_text(aes(x=`Stage at Dx (#0-4)`, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
     geom_text(aes(x=`Stage at Dx (#0-4)`, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
+   geom_hline(yintercept = 0.72, color = 'black',linetype  = 2 ) + 
+   annotate('ribbon', x = c(-Inf, Inf), ymin = 0.72 -0.036, ymax = 0.72 + 0.036, 
+           alpha = 0.3, fill = 'red') + 
     scale_y_continuous(labels = scales::percent)+
     ylab("Percentage")+
     xlab("Stages")
@@ -107,6 +117,9 @@ ggplot(df_6) +
     geom_errorbar(aes(x=`ECOG at Initial (#0-4)`, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
     geom_text(aes(x=`ECOG at Initial (#0-4)`, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
     geom_text(aes(x=`ECOG at Initial (#0-4)`, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
+      geom_hline(yintercept = 0.72, color = 'black',linetype  = 2 ) + 
+   annotate('ribbon', x = c(-Inf, Inf), ymin = 0.72 -0.036, ymax = 0.72 + 0.036, 
+           alpha = 0.3, fill = 'red') + 
     scale_y_continuous(labels = scales::percent, limits = c(0,1))+
     ylab("Percentage")+
     xlab("ECOG Status") 
@@ -146,6 +159,9 @@ at Birth (m/f)`, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=
 at Birth (m/f)`, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
     geom_text(aes(x=`Sex Assigned
 at Birth (m/f)`, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
+      geom_hline(yintercept = 0.72, color = 'black',linetype  = 2 ) + 
+   annotate('ribbon', x = c(-Inf, Inf), ymin = 0.72 -0.036, ymax = 0.72 + 0.036, 
+           alpha = 0.3, fill = 'red') + 
     scale_y_continuous(labels = scales::percent, limits = c(0,1))+
     ylab("Percentage")+
     xlab("Sex assigned at birth") 
@@ -179,6 +195,9 @@ ggplot(df_8) +
     geom_errorbar(aes(x=`Ethnicity/ Ancestry`, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
     geom_text(aes(x=`Ethnicity/ Ancestry`, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
     geom_text(aes(x=`Ethnicity/ Ancestry`, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
+     geom_hline(yintercept = 0.72, color = 'black',linetype  = 2 ) + 
+   annotate('ribbon', x = c(-Inf, Inf), ymin = 0.72 -0.036, ymax = 0.72 + 0.036, 
+           alpha = 0.3, fill = 'red') + 
     scale_y_continuous(labels = scales::percent, limits = c(0,1))+
     ylab("Percentage")+
     xlab("Ethnicity") 
@@ -214,9 +233,12 @@ df_8<- df8 %>% filter(`Genetics Referrals`== "yes")
 
 ggplot(df_8) +
     geom_bar( aes(x=quantile, y=prop), stat="identity", fill="skyblue", alpha=0.7) +
-    geom_errorbar(aes(x=quantile, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
+    geom_errorbar(aes(x=quantile, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+ 
     geom_text(aes(x=quantile, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
     geom_text(aes(x=quantile, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
+    geom_hline(yintercept = 0.72, color = 'black',linetype  = 2 ) + 
+   annotate('ribbon', x = c(-Inf, Inf), ymin = 0.72 -0.036, ymax = 0.72 + 0.036, 
+           alpha = 0.3, fill = 'red') + 
     scale_y_continuous(labels = scales::percent, limits = c(0,1))+
     ylab("Percentage")+
     xlab("Age") 
