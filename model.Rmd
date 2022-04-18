@@ -48,6 +48,8 @@ dat_1$`Ethnicity/ Ancestry`<- ifelse(dat_1$`Ethnicity/ Ancestry` == "white", "wh
 ## Visulization
 
 ### 1. Cancer Stage
+
+The figure below illustrates the relationship between referral rate and cancer stages. There are many overlaps among error bars. The cancer stage might not be related to the referral rate. 
 ```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap= 'Proportion of Patients Who got referrals in each Cancer Stage'} 
 
 df5<- dat_1 %>%
@@ -75,6 +77,7 @@ ggplot(df_5) +
 
 
 ### 2. ECOG level
+The figure below shows the relationship between ECOG status and referral rate. We can conclude that there is no obvious relationship between ECOG status and the referral rate. 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of Patients Who got referral rate in each ECOG Level'}
 
 df6 <- dat_1 %>%
@@ -103,6 +106,7 @@ ggplot(df_6) +
 ```
 
 ### 3. Sex Assigned at Birth 
+From the the plot below, we might conclude that gender is related to the referral rate. 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of Patients Who got referral rate among genders'}
 
 df7 <- dat_1 %>%
@@ -138,7 +142,9 @@ at Birth (m/f)`, y=prop,label = label), position = position_stack(vjust = 0.3), 
 ```
 
 ### 4. Ethnicity
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of Patients Who got referral rate among genders'}
+Since some ethnicity only contain few observations, we divide the race into white and not white and use as the new variable. And the figure below does not show that there is an obvious relationship between race and
+referral rate.
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of Patients Who got referral rate among races'}
 
 df8 <- dat_1 %>%
   count(`Genetics Referrals`,`Ethnicity/ Ancestry`) %>%
@@ -168,15 +174,14 @@ ggplot(df_8) +
 ### 5. Age
 
 
-We divide Age into groups using quantile. 
+We divide Age into groups using quantiles. The first group contains patients from 32 to 62 years old. And  the second group contains patients aged from 62 to 68. And the third group include patients from 68 to 75.5 years old. And the last group include patients whose age are in the 4th quantile. 
 
 ```{r, echo = FALSE}
 #dat_1$`Age at Dx (#)`
 quantile(dat_1$`Age at Dx (#)`)
 ```
 
-
-
+From the plot below, there is no much difference for the referral rate among 2nd, 3rd and 4th groups.
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of Patients Who got referral rate for white/non-white'}
 dat_1 <- dat_1 %>%
     mutate(quantile = ntile(`Age at Dx (#)`, 4))
@@ -208,7 +213,7 @@ ggplot(df_8) +
 
 ## Model Fit
 
-We consider to use logistic regression model since the the outcome is binary.
+We will use logistic regression to fit our data since we have binary outcome of whether the patients got a referral from GIM or not. We will fit three models. The full model will include both cancer stage and ECOG level. And the other two will only include either ECOG level or Cancer Stage. 
 
 ```{r}
 dat_1$`Genetics Referrals`<- ifelse (dat_1$`Genetics Referrals` == "yes", 1, 0)
@@ -216,6 +221,7 @@ model1 <- glm(`Genetics Referrals` ~  `Stage at Dx (#0-4)` +  `ECOG at Initial (
 at Birth (m/f)` , family = "binomial", data = dat_1)
 summary(model1)
 ```
+
 
 Model without Cancer Stage
 ```{r}
@@ -226,7 +232,6 @@ summary(model2)
 
 
 Model without ECOG level
-
 ```{r}
 model3 <- glm(`Genetics Referrals` ~  `Stage at Dx (#0-4)` +  `Age at Dx (#)` + `Ethnicity/ Ancestry` + `Sex Assigned
 at Birth (m/f)` , family = "binomial", data = dat_1)
