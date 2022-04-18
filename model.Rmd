@@ -1,6 +1,6 @@
 ---
 title: "logistic regression model"
-author: "Shicong Wang"
+author: "Elisa Zhang, Shicong Wang"
 date: "4/8/2022"
 output: pdf_document
 ---
@@ -11,13 +11,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r , include = FALSE}
 #package we use
-library(readr)
+library(arm)
 library(stringr)
-library(ggplot2)
 library(dplyr)
-library(stringr)
-library(ggpubr)
-library(webshot)
+library(arm)
+library(MASS)
+library(tidyverse)
 ```
 
 ```{r , include = FALSE}
@@ -42,29 +41,204 @@ dat_1$`Initial Appt (#1-30)`[dat_1$`Initial Appt (#1-30)`> 15 & dat_1$`Initial A
 dat_1$`Initial Appt (#1-30)`[dat_1$`Initial Appt (#1-30)`> 22 & dat_1$`Initial Appt (#1-30)`< 23]  <- 22
 
 dat_1$`Genetics Referrals`<- ifelse(dat_1$`# Genetics Referrals` >0, "yes", "no")
+dat_1$`Ethnicity/ Ancestry`<- ifelse(dat_1$`Ethnicity/ Ancestry` == "white", "white", "not white")
+
+```
+
+## Visulization
+
+### 1. Cancer Stage
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap= 'Proportion of Patients Who got referrals in each Cancer Stage'} 
+
+df5<- dat_1 %>%
+  count(`Genetics Referrals`,`Stage at Dx (#0-4)`) %>%
+  arrange(`Genetics Referrals`, desc(`Stage at Dx (#0-4)`)) %>% # Rearranging in stacking order  
+  group_by(`Stage at Dx (#0-4)`) %>%
+  mutate(Freq2 = cumsum(n), # Calculating position of stacked Freq
+         prop = n/sum(n),
+         percentage = 100* n/sum(n))  # Calculating proportion of Freq
+
+df5$label = paste0(sprintf("%.2f", df5$percentage), "%")
+df5$sd<- sqrt( df5$prop*(1-df5$prop) / df5$Freq2)
+
+df_5<- df5 %>% filter(`Genetics Referrals`== "yes")
+
+ggplot(df_5) +
+    geom_bar( aes(x=`Stage at Dx (#0-4)`, y=prop), stat="identity", fill="skyblue", alpha=0.7) +
+    geom_errorbar(aes(x=`Stage at Dx (#0-4)`, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
+    geom_text(aes(x=`Stage at Dx (#0-4)`, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
+    geom_text(aes(x=`Stage at Dx (#0-4)`, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
+    scale_y_continuous(labels = scales::percent)+
+    ylab("Percentage")+
+    xlab("Stages")
 ```
 
 
-## model
+### 2. ECOG level
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of Patients Who got referral rate in each ECOG Level'}
+
+df6 <- dat_1 %>%
+  count(`Genetics Referrals`,`ECOG at Initial (#0-4)`) %>%
+  arrange(`Genetics Referrals`, desc(`ECOG at Initial (#0-4)`)) %>% # Rearranging in stacking order  
+  group_by(`ECOG at Initial (#0-4)`) %>%
+  mutate(Freq2 = cumsum(n), # Calculating position of stacked Freq
+         prop = n/sum(n),
+         percentage = 100* n/sum(n))  # Calculating proportion of Freq
+
+df6$label = paste0(sprintf("%.2f", df6$percentage), "%")
+
+df6$sd<- sqrt( df6$prop*(1-df6$prop) / df6$Freq2)
+
+df_6<- df6 %>% filter(`Genetics Referrals`== "yes")
+
+
+ggplot(df_6) +
+    geom_bar( aes(x=`ECOG at Initial (#0-4)`, y=prop), stat="identity", fill="skyblue", alpha=0.7) +
+    geom_errorbar(aes(x=`ECOG at Initial (#0-4)`, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
+    geom_text(aes(x=`ECOG at Initial (#0-4)`, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
+    geom_text(aes(x=`ECOG at Initial (#0-4)`, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
+    scale_y_continuous(labels = scales::percent, limits = c(0,1))+
+    ylab("Percentage")+
+    xlab("ECOG Status") 
+```
+
+### 3. Sex Assigned at Birth 
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of Patients Who got referral rate among genders'}
+
+df7 <- dat_1 %>%
+  count(`Genetics Referrals`,`Sex Assigned
+at Birth (m/f)`) %>%
+  arrange(`Genetics Referrals`, desc(`Sex Assigned
+at Birth (m/f)`)) %>% # Rearranging in stacking order  
+  group_by(`Sex Assigned
+at Birth (m/f)`) %>%
+  mutate(Freq2 = cumsum(n), # Calculating position of stacked Freq
+         prop = n/sum(n),
+         percentage = 100* n/sum(n))  # Calculating proportion of Freq
+
+df7$label = paste0(sprintf("%.2f", df7$percentage), "%")
+
+df7$sd<- sqrt( df7$prop*(1-df7$prop) / df7$Freq2)
+
+df_7<- df7 %>% filter(`Genetics Referrals`== "yes")
+
+
+ggplot(df_7) +
+    geom_bar( aes(x=`Sex Assigned
+at Birth (m/f)`, y=prop), stat="identity", fill="skyblue", alpha=0.7) +
+    geom_errorbar(aes(x=`Sex Assigned
+at Birth (m/f)`, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
+    geom_text(aes(x=`Sex Assigned
+at Birth (m/f)`, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
+    geom_text(aes(x=`Sex Assigned
+at Birth (m/f)`, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
+    scale_y_continuous(labels = scales::percent, limits = c(0,1))+
+    ylab("Percentage")+
+    xlab("Sex assigned at birth") 
+```
+
+### 4. Ethnicity
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of Patients Who got referral rate among genders'}
+
+df8 <- dat_1 %>%
+  count(`Genetics Referrals`,`Ethnicity/ Ancestry`) %>%
+  arrange(`Genetics Referrals`, desc(`Ethnicity/ Ancestry`)) %>% # Rearranging in stacking order  
+  group_by(`Ethnicity/ Ancestry`) %>%
+  mutate(Freq2 = cumsum(n), # Calculating position of stacked Freq
+         prop = n/sum(n),
+         percentage = 100* n/sum(n))  # Calculating proportion of Freq
+
+df8$label = paste0(sprintf("%.2f", df8$percentage), "%")
+
+df8$sd<- sqrt( df8$prop*(1-df8$prop) / df8$Freq2)
+
+df_8<- df8 %>% filter(`Genetics Referrals`== "yes")
+
+
+ggplot(df_8) +
+    geom_bar( aes(x=`Ethnicity/ Ancestry`, y=prop), stat="identity", fill="skyblue", alpha=0.7) +
+    geom_errorbar(aes(x=`Ethnicity/ Ancestry`, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
+    geom_text(aes(x=`Ethnicity/ Ancestry`, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
+    geom_text(aes(x=`Ethnicity/ Ancestry`, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
+    scale_y_continuous(labels = scales::percent, limits = c(0,1))+
+    ylab("Percentage")+
+    xlab("Ethnicity") 
+```
+
+### 5. Age
+
+
+We divide Age into groups using quantile. 
+
+```{r, echo = FALSE}
+#dat_1$`Age at Dx (#)`
+quantile(dat_1$`Age at Dx (#)`)
+```
+
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of Patients Who got referral rate for white/non-white'}
+dat_1 <- dat_1 %>%
+    mutate(quantile = ntile(`Age at Dx (#)`, 4))
+df8 <- dat_1 %>%
+  count(`Genetics Referrals`,quantile) %>%
+  arrange(`Genetics Referrals`, desc(quantile)) %>% # Rearranging in stacking order  
+  group_by(quantile) %>%
+  mutate(Freq2 = cumsum(n), # Calculating position of stacked Freq
+         prop = n/sum(n),
+         percentage = 100* n/sum(n))  # Calculating proportion of Freq
+
+df8$label = paste0(sprintf("%.2f", df8$percentage), "%")
+
+df8$sd<- sqrt( df8$prop*(1-df8$prop) / df8$Freq2)
+
+df_8<- df8 %>% filter(`Genetics Referrals`== "yes")
+
+
+ggplot(df_8) +
+    geom_bar( aes(x=quantile, y=prop), stat="identity", fill="skyblue", alpha=0.7) +
+    geom_errorbar(aes(x=quantile, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+
+    geom_text(aes(x=quantile, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
+    geom_text(aes(x=quantile, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
+    scale_y_continuous(labels = scales::percent, limits = c(0,1))+
+    ylab("Percentage")+
+    xlab("Age") 
+```
+
+
+## Model Fit
 
 We consider to use logistic regression model since the the outcome is binary.
 
 ```{r}
 dat_1$`Genetics Referrals`<- ifelse (dat_1$`Genetics Referrals` == "yes", 1, 0)
-dat_1$`Ethnicity/ Ancestry`<- ifelse(dat_1$`Ethnicity/ Ancestry` == "white", "white", "not white")
-
-model1 <- glm(`Genetics Referrals` ~ `Stage at Dx (#0-4)` + `ECOG at Initial (#0-4)` + `Age at Dx (#)` + `Ethnicity/ Ancestry` + `Sex Assigned
+model1 <- glm(`Genetics Referrals` ~  `Stage at Dx (#0-4)` +  `ECOG at Initial (#0-4)` + `Age at Dx (#)` + `Ethnicity/ Ancestry` + `Sex Assigned
 at Birth (m/f)` , family = "binomial", data = dat_1)
 summary(model1)
 ```
 
+Model without Cancer Stage
+```{r}
+model2 <- glm(`Genetics Referrals` ~   `ECOG at Initial (#0-4)` + `Age at Dx (#)` + `Ethnicity/ Ancestry` + `Sex Assigned
+at Birth (m/f)` , family = "binomial", data = dat_1)
+summary(model2)
+```
+
+
+Model without ECOG level
+
+```{r}
+model3 <- glm(`Genetics Referrals` ~  `Stage at Dx (#0-4)` +  `Age at Dx (#)` + `Ethnicity/ Ancestry` + `Sex Assigned
+at Birth (m/f)` , family = "binomial", data = dat_1)
+summary(model3)
+```
+
+None of the variables are associated with the processing of getting referral from GIM. 
 ## Diagnosisted Plots
 
 ### Binned residual plot
 
 ```{r}
-library(arm)
-library(MASS)
 binnedplot(fitted(model1), 
            residuals(model1, type = "response"), 
            xlab = "Expected Values", 
@@ -74,5 +248,3 @@ binnedplot(fitted(model1),
            col.pts = 1, 
            col.int = "gray")
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
