@@ -45,7 +45,38 @@ dat_1$`Ethnicity/ Ancestry`<- ifelse(dat_1$`Ethnicity/ Ancestry` == "white", "wh
 
 ```
 
+## Introduction
+
+In this section, we need to focus on building an inference model to evaluate what kind of parameters can exert effect on genetic referrals. Given on previous analysis, we listed some of the features that seemingly related to the response: cancer stages, ECOG level, sex assigned at birth, ethnicity and age.
+
+However, when consider both cancer stage and ECOG level, we wonder whether they were correlated. On behalf of that ECOG level serve as a public domain to classify a patient according to their well-being, which appear to relate to cancer stage. As a result, we mainly concern one with both stage and ECOG, while the other two serve as a safeguard against this association and are shown in appendix.
+
+
+## Important concept
+
+During the analysis, we faced a problem when estimating the standard error for the overall referral rate. Cause our response is binary, we deal with the proportion problem as below:
+
+The random variable P' is the sample proportion:
+
+$$  P' = \frac{X}{n}$$
+
+where X is the random variable for the number of acceptance, n is the sample size.
+
+The standard deviation is found to be 
+
+$$\sigma_{p'} = \sqrt{\frac{p(1-p)}{n}}$$
+ 
+where p is the probability of acceptance, p' is the sample proportion of acceptance, and n is the size of the sample.
+
+Therefore, the confidence interval for a population proportion become as
+
+$$p = p' \pm \left[Z_{\alpha/2} \sqrt{\frac{p'(1-p')}{n}} \right]$$
+where  $Z_{\alpha/2}$ is set according to our desired degree of confidence and $\sqrt{\frac{p(1-p)}{n}}$ is the standard deviation of the sampling distribution.
+
+
 ## Visulization
+
+Since visualizing the dependent variables in the model helps us anticipate and make sense of results, we try to generate a series of plots on each variable. In each plot, we generate error bars by using the formula in last section.
 
 ### 1. Cancer Stage
 
@@ -57,7 +88,6 @@ sqrt(avg_referral*(1-avg_referral)/nrow(dat_1))
 ```
 
 The figure below illustrates the relationship between referral rate and cancer stages. There are many overlaps among error bars. The cancer stage might not be related to the referral rate. 
-
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE, fig.cap= 'Proportion of Patients Who got referrals in each Cancer Stage'} 
 
@@ -247,7 +277,9 @@ ggplot(df_8) +
 
 ## Model Fit
 
-We will use logistic regression to fit our data since we have binary outcome of whether the patients got a referral from GIM or not. We will fit three models. The full model will include both cancer stage and ECOG level. And the other two will only include either ECOG level or Cancer Stage. 
+We will use logistic regression to fit our data since we have binary outcome of whether the patients got a referral from GIM or not. We will fit three models. The full model will include both cancer stage and ECOG level. And the other two will only include either ECOG level or Cancer Stage which are put in appendix.
+
+Below is the full model:
 
 ```{r, include = FALSE}
 dat_1$`Genetics Referrals`<- ifelse (dat_1$`Genetics Referrals` == "yes", 1, 0)
@@ -262,6 +294,44 @@ at Birth (m/f)` , family = "binomial", data = dat_1)
 summary(model1)
 ```
 
+Since the majority of p-values are greater than 0.05, we don't have enough confidence to reject the null hypothesis that the variable has no correlation with the dependent variable. Consequently, it's insufficient that these variables contribute significantly to genetic referrals.
+
+## Model selection
+
+In case of the correlation between ECOG level and cancer stage, we consider to extract either of it from the full model and compare them to the full model. However, conclusions have not changed so far.
+
+We consider the following results:
+
+(1) According to the corresponding information from client, we note that many patients even with high cancer stage are asymptomatic. Since ECOG measures well being, it is reasonable that there might not be a relationship between these variables.
+		
+(2) By fitting three models, we checked whether the analysis is robust to possible association. Then we find the results of three models are quite similar that all of which are not significant enough. In that case, it's unnecessary to pay much attention on such association.
+
+Therefore, we still maintain the full model in this section.
+
+\newpage
+
+## Diagnostic Plot
+The diagnostic plot can be used to measure the goodness of fit of the model. 
+
+### Binned residual plot
+
+The binned residual plot can assess the overall fit of regression models for binary outcomes. Since most of points are within the grey line and there is no obvious pattern for the points, the model does not have much problem. 
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Binned residual plot for full model'}
+binnedplot(fitted(model1), 
+           residuals(model1, type = "response"), 
+           xlab = "Expected Values", 
+           ylab = "Average residual", 
+           main = "Binned residual plot",
+           cex.pts = 0.8, 
+           col.pts = 1, 
+           col.int = "gray")
+```
+
+\newpage
+
+## Appendix
 
 Model without Cancer Stage
 
@@ -286,28 +356,3 @@ model3 <- glm(`Genetics Referrals` ~  `Stage at Dx (#0-4)` +
 at Birth (m/f)` , family = "binomial", data = dat_1)
 summary(model3)
 ```
-
-None of the variables are associated with the processing of getting referral from GIM. 
-
-\newpage
-
-## Diagnostic Plot
-The diagnostic plot can be used to measure the goodness of fit of the model. 
-
-### Binned residual plot
-
-The binned residual plot can assess the overall fit of regression models for binary outcomes. Since most of points are within the grey line and there is no obvious pattern for the points, the model does not have much problem. 
-
-
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Binned residual plot for full model'}
-binnedplot(fitted(model1), 
-           residuals(model1, type = "response"), 
-           xlab = "Expected Values", 
-           ylab = "Average residual", 
-           main = "Binned residual plot",
-           cex.pts = 0.8, 
-           col.pts = 1, 
-           col.int = "gray")
-```
-
-
