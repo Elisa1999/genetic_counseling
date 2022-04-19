@@ -47,14 +47,14 @@ dat_1$`Ethnicity/ Ancestry`<- ifelse(dat_1$`Ethnicity/ Ancestry` == "white", "wh
 
 ## Introduction
 
-In this section, we need to focus on building an inference model to evaluate what kind of parameters can exert effect on genetic referrals. Given on previous analysis, we listed some of the features that seemingly related to the response: cancer stages, ECOG level, sex assigned at birth, ethnicity and age.
+In this section, we need to focus on building an inference model to evaluate what kind of parameters can exert effect on genetic referrals. Given on previous analysis, we list some of the features that seemingly related to the response: cancer stages, ECOG level, sex assigned at birth, ethnicity and age.
 
-However, when consider both cancer stage and ECOG level, we wonder whether they were correlated. On behalf of that ECOG level serve as a public domain to classify a patient according to their well-being, which appear to relate to cancer stage. As a result, we mainly concern one with both stage and ECOG, while the other two serve as a safeguard against this association and are shown in appendix.
+However, when consider both cancer stage and ECOG level, we wonder whether they are correlated. On behalf of that ECOG level serve as a public domain to classify a patient according to their well-being, which appear to relate to cancer stage. As a result, we mainly concern one model with both stage and ECOG, while the other two serve as a safeguard against this association and are shown in appendix.
 
 
 ## Important concept
 
-During the analysis, we faced a problem when estimating the standard error for the overall referral rate. Cause our response is binary, we deal with the proportion problem as below:
+During the analysis, we faced a problem when estimating the standard error for the overall referral rate. Note that our response is binary, we deal with the proportion problem as below:
 
 The random variable P' is the sample proportion:
 
@@ -294,11 +294,11 @@ at Birth (m/f)` , family = "binomial", data = dat_1)
 summary(model1)
 ```
 
-Since the majority of p-values are greater than 0.05, we don't have enough confidence to reject the null hypothesis that the variable has no correlation with the dependent variable. Consequently, it's insufficient that these variables contribute significantly to genetic referrals.
+Since the majority of p-values are greater than 0.05, we don't have enough confidence to reject the null hypothesis that the variables have no correlations with the dependent variable. Consequently, it's insufficient that these variables contribute significantly to genetic referrals.
 
 ## Model selection
 
-In case of the correlation between ECOG level and cancer stage, we consider to extract either of it from the full model and compare them to the full model. However, conclusions have not changed so far.
+In case of the correlation between ECOG level and cancer stage, we consider to extract either of them from the full model and compare them to the full model. However, conclusions have not changed so far.
 
 We consider the following results:
 
