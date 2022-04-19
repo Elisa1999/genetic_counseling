@@ -47,36 +47,22 @@ dat_1$`Ethnicity/ Ancestry`<- ifelse(dat_1$`Ethnicity/ Ancestry` == "white", "wh
 
 ## Introduction
 
-In this section, we need to focus on building an inference model to evaluate what kind of parameters can exert effect on genetic referrals. Given on previous analysis, we list some of the features that seemingly related to the response: cancer stages, ECOG level, sex assigned at birth, ethnicity and age.
+In this report, we focus on building an inferential model to evaluate the association between key variables and genetic referral rate. The predictor variables that we include in the model are cancer stage, ECOG level, sex assigned at birth, ethnicity and age.
 
-However, when consider both cancer stage and ECOG level, we wonder whether they are correlated. On behalf of that ECOG level serve as a public domain to classify a patient according to their well-being, which appear to relate to cancer stage. As a result, we mainly concern one model with both stage and ECOG, while the other two serve as a safeguard against this association and are shown in appendix.
+We include visualizations of the relationship between each predictor and referral rate. From the visualizations, we see that there does not appear to be much of a marginal relationship between each predictor and the response.
 
+The model which we use is a logistic regression model. The results match what the visualizations seem to be telling us--we do not see strong evidence of a relationship between any of the predictors and referral rate.
 
-## Important concept
-
-During the analysis, we faced a problem when estimating the standard error for the overall referral rate. Note that our response is binary, we deal with the proportion problem as below:
-
-The random variable P' is the sample proportion:
-
-$$  P' = \frac{X}{n}$$
-
-where X is the random variable for the number of acceptance, n is the sample size.
-
-The standard deviation is found to be 
-
-$$\sigma_{p'} = \sqrt{\frac{p(1-p)}{n}}$$
- 
-where p is the probability of acceptance, p' is the sample proportion of acceptance, and n is the size of the sample.
-
-Therefore, the confidence interval for a population proportion become as
-
-$$p = p' \pm \left[Z_{\alpha/2} \sqrt{\frac{p'(1-p')}{n}} \right]$$
-where  $Z_{\alpha/2}$ is set according to our desired degree of confidence and $\sqrt{\frac{p(1-p)}{n}}$ is the standard deviation of the sampling distribution.
+One potential concern in modelling is if predictor variables are highly correlated, as this can lead unreliable inferences. As ECOG measures the level of a patients functioning (in terms of daily living abilities), we felt that there may be reason to believe that it could be associated with cancer stage. Therefore, we include two additional models in the appendix: one which omits ECOG from the predictors, and one which omits stage from the predictors, to see whether there is a difference. In all models, there is no strong evidence of a relationship between the predictors and the response.
 
 
 ## Visulization
 
-Since visualizing the dependent variables in the model helps us anticipate and make sense of results, we try to generate a series of plots on each variable. In each plot, we generate error bars by using the formula in last section.
+Since visualizing the dependent variables in the model helps us anticipate and make sense of results, we try to generate a series of plots on each variable. In each plot, we generate error bars using the formula in the appendix.
+
+Notice that in each figure, the dotted line and shaded band in this figure is the overall estimate of the referral rate and 95% confidence interval, while the orange bars are 95% confidence intervals for each proportion.
+
+\newpage
 
 ### 1. Cancer Stage
 
@@ -116,7 +102,6 @@ ggplot(df_5) +
     ylab("Percentage")+
     xlab("Stages")
 ```
-
 
 \newpage
 
@@ -158,6 +143,7 @@ ggplot(df_6) +
 \newpage
 
 ### 3. Sex Assigned at Birth 
+
 From the the plot below, we might conclude that gender is related to the referral rate. 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of Patients Who got referral rate among genders'}
@@ -233,19 +219,24 @@ ggplot(df_8) +
     xlab("Ethnicity") 
 ```
 
+\newpage
+
 ### 5. Age
 
 We divide Age into groups using quantiles. The first group contains patients from 32 to 62 years old. And  the second group contains patients aged from 62 to 68. And the third group include patients from 68 to 75.5 years old. And the last group include patients whose age are in the 4th quantile. 
 
+The error bar for individuals in the first quantile, [32.0,62.0], does not overlap with the other bars or the overall referral rate error bars. While this could suggest that the referral rate in this quantile is different, given that we have produced 15 estimates with error bars in this report, it would be unsurprising to see some which does not overlap with the others even if the true referral rate was the same in all groups. In our model, we do not find strong evidence of a relationship between age and referral rates.
+
 ```{r, echo = FALSE}
 #dat_1$`Age at Dx (#)`
 quantile(dat_1$`Age at Dx (#)`)
+
 ```
 
-From the plot below, there is no much difference for the referral rate among 2nd, 3rd and 4th groups.
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap= 'Proportions of Patients Who got referral rate for white/non-white'}
 dat_1 <- dat_1 %>%
     mutate(quantile = ntile(`Age at Dx (#)`, 4))
+
 df8 <- dat_1 %>%
   count(`Genetics Referrals`,quantile) %>%
   arrange(`Genetics Referrals`, desc(quantile)) %>% # Rearranging in stacking order  
@@ -260,9 +251,10 @@ df8$sd<- sqrt( df8$prop*(1-df8$prop) / df8$Freq2)
 
 df_8<- df8 %>% filter(`Genetics Referrals`== "yes")
 
+df_8$interval <- c("[75.5,96.0]", "[68.0, 75.5)", "[62.0, 68.0)", "[32.0, 62.0)")
 
 ggplot(df_8) +
-    geom_bar( aes(x=quantile, y=prop), stat="identity", fill="skyblue", alpha=0.7) +
+    geom_bar( aes(x=interval, y=prop), stat="identity", fill="skyblue", alpha=0.7) +
     geom_errorbar(aes(x=quantile, ymin=prop-sd, ymax=prop+sd), width=0.4, colour="orange", alpha=0.9, size=1.3)+ 
     geom_text(aes(x=quantile, y=prop,label = n), position = position_stack(vjust = 0.5), size = 4, color="white")+
     geom_text(aes(x=quantile, y=prop,label = label), position = position_stack(vjust = 0.3), size = 4, color="white")+
@@ -274,6 +266,7 @@ ggplot(df_8) +
     xlab("Age") 
 ```
 
+\newpage
 
 ## Model Fit
 
@@ -294,9 +287,11 @@ at Birth (m/f)` , family = "binomial", data = dat_1)
 summary(model1)
 ```
 
-Since the majority of p-values are greater than 0.05, we don't have enough confidence to reject the null hypothesis that the variables have no correlations with the dependent variable. Consequently, it's insufficient that these variables contribute significantly to genetic referrals.
+Since the all of p-values are greater than 0.05, we don't have enough confidence to reject the null hypothesis that the variables have no correlations with the dependent variable. Consequently, it's insufficient to infer that these variables contribute significantly to genetic referrals.
 
-## Model selection
+\newpage
+
+## Robustness of model results to association between ECOG and cancer stage
 
 In case of the correlation between ECOG level and cancer stage, we consider to extract either of them from the full model and compare them to the full model. However, conclusions have not changed so far.
 
@@ -304,11 +299,10 @@ We consider the following results:
 
 (1) According to the corresponding information from client, we note that many patients even with high cancer stage are asymptomatic. Since ECOG measures well being, it is reasonable that there might not be a relationship between these variables.
 		
-(2) By fitting three models, we checked whether the analysis is robust to possible association. Then we find the results of three models are quite similar that all of which are not significant enough. In that case, it's unnecessary to pay much attention on such association.
+(2) By fitting three models, we checked whether the analysis is robust to possible association. Then we find the results of three models are quite similar that all of which are not significant enough. In that case, association between these variables does not seem to have an effect on the model results.
 
 Therefore, we still maintain the full model in this section.
 
-\newpage
 
 ## Diagnostic Plot
 The diagnostic plot can be used to measure the goodness of fit of the model. 
@@ -333,6 +327,8 @@ binnedplot(fitted(model1),
 
 ## Appendix
 
+### two sub-models
+
 Model without Cancer Stage
 
 ```{r}
@@ -356,3 +352,26 @@ model3 <- glm(`Genetics Referrals` ~  `Stage at Dx (#0-4)` +
 at Birth (m/f)` , family = "binomial", data = dat_1)
 summary(model3)
 ```
+
+\newpage
+
+### Error bar calculations
+
+During the analysis, we faced a problem when estimating the standard error for the overall referral rate. Note that our response is binary, we deal with the proportion problem as below:
+
+The random variable P' is the sample proportion:
+
+$$  P' = \frac{X}{n}$$
+
+where X is the random variable for the number of acceptance, n is the sample size.
+
+The standard deviation is found to be 
+
+$$\sigma_{p'} = \sqrt{\frac{p(1-p)}{n}}$$
+ 
+where p is the probability of acceptance, p' is the sample proportion of acceptance, and n is the size of the sample.
+
+Therefore, the confidence interval for a population proportion become as
+
+$$p = p' \pm \left[Z_{\alpha/2} \sqrt{\frac{p'(1-p')}{n}} \right]$$
+where  $Z_{\alpha/2}$ is set according to our desired degree of confidence and $\sqrt{\frac{p(1-p)}{n}}$ is the standard deviation of the sampling distribution.
