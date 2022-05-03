@@ -47,18 +47,19 @@ dat_1$`Ethnicity/ Ancestry`<- ifelse(dat_1$`Ethnicity/ Ancestry` == "white", "wh
 
 ## Introduction
 
-In this report, we focus on building an inferential model to evaluate the association between key variables and genetic referral rate. The predictor variables that we include in the model are cancer stage, ECOG level, sex assigned at birth, ethnicity and age.
+In this report, we focus on implementing a logistic regression model to identify the relationship between potential predictors variables and genetic referral rate. The predictor variables that we will include in the model are cancer stage, ECOG level, sex assigned at birth, ethnicity and age.
 
-We include visualizations of the relationship between each predictor and referral rate. From the visualizations, we see that there does not appear to be much of a marginal relationship between each predictor and the response.
+The report will include visualizations of the relationship between each potential predictor and referral rate. From the visualizations, we might conclude that there is not obvious relationship between each predictor and the response variable.
 
-The model which we use is a logistic regression model. The results match what the visualizations seem to be telling us--we do not see strong evidence of a relationship between any of the predictors and referral rate.
+After implementing the logistic regression model, the model output is aligned with what the visualizations seem to be telling us--we do not see strong evidence of a relationship between any of the predictors and referral rate.
 
-One potential concern in modelling is if predictor variables are highly correlated, as this can lead unreliable inferences. As ECOG measures the level of a patients functioning (in terms of daily living abilities), we felt that there may be reason to believe that it could be associated with cancer stage. Therefore, we include two additional models in the appendix: one which omits ECOG from the predictors, and one which omits stage from the predictors, to see whether there is a difference. In all models, there is no strong evidence of a relationship between the predictors and the response.
+One potential concern would be multicollinearity - whether the predictor variables are highly correlated. Since the number of observations in the contingency table of ECOG level and Cancer stage is too small to satisfy the rule of thumbs of chi-sqaure test of independence, we include two additional models in the appendix to check the multicollinearity. One model omits ECOG from the predictors, and the other omits stage from the predictors. The result came out that there is no difference between two, which indicates that the two predictor variable is not correlated based on the data we have. In all models, there is no strong evidence of a relationship between the predictors and the response.
 
 
 ## Visulization
 
-Since visualizing the dependent variables in the model helps us anticipate and make sense of results, we try to generate a series of plots on each variable. In each plot, we generate error bars using the formula in the appendix.
+In this part, we generate the stacked bar plots for each combination of predictor and outcome variable. 
+The error bars in the following figures are calculated using the formula in the appendix.
 
 Notice that in each figure, the dotted line and shaded band in this figure is the overall estimate of the referral rate and 95% confidence interval, while the orange bars are 95% confidence intervals for each proportion.
 
@@ -287,7 +288,7 @@ at Birth (m/f)` , family = "binomial", data = dat_1)
 summary(model1)
 ```
 
-Since the all of p-values are greater than 0.05, we don't have enough confidence to reject the null hypothesis that the variables have no correlations with the dependent variable. Consequently, it's insufficient to infer that these variables contribute significantly to genetic referrals.
+Since the all of p-values are greater than 0.05, we don't have enough confidence to reject the null hypothesis that the variables have no correlations with the dependent variable. Therefore, it's insufficient to infer that these variables contribute significantly to genetic referrals.
 
 \newpage
 
