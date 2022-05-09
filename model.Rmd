@@ -45,18 +45,17 @@ dat_1$`Ethnicity/ Ancestry`<- ifelse(dat_1$`Ethnicity/ Ancestry` == "white", "wh
 
 ```
 ## Abstract
-In the report, we are interested in exploring the relationship between cancer stage, ECOG level, sex assigned at birth, ethnicity, age and genetic referral rate. We fit a logistic regression model to identify the relationship between predictors and the outcome variable. The output of the model indicates that there is insufficient statistical evidence that the correlation between the each predictor and outcome variable is significant at 0.05 significance level. 
+In the report, we are interested in exploring the relationship between cancer stage, ECOG level, sex assigned at birth, ethnicity, age, and genetic referral rate. We fit a logistic regression model to identify the relationship between predictors and the outcome variable. The output of the model indicates that there is insufficient statistical evidence that the correlation between each predictor and outcome variable is significant at a significance level of 0.05. 
 
 ## Introduction
 The overall report consists of three parts. 
-In the first part, we include visualizations of the relationship between each potential predictor and referral rate. From the visualizations, we could conclude that there is not obvious relationship between each predictor and the response variable.
+In the first part, we include visualizations of the relationship between each potential predictor and referral rate. From the visualizations, we could conclude that there is no obvious relationship between each predictor and the response variable.
 
 In the second part, we fit a full model using logistic regression. The model output is aligned with what the visualizations seem to be telling us - we do not see strong evidence of a relationship between any of the predictors and referral rate.
 
 Finally, we have a diagnostic plot to check the goodness of fit of the model.  
 
-One potential concern would be multicollinearity - whether the predictor variables are highly correlated. Since the number of observations in the contingency table of ECOG level and Cancer stage is too small to satisfy the rule of thumbs of chi-sqaure test of independence, we include two additional models in the appendix to check the multicollinearity. One model omits ECOG from the predictors, and the other omits stage from the predictors. The result came out that there is no difference between two, which indicates that the two predictor variable is not correlated based on the data we have. In all models, there is no strong evidence of a relationship between the predictors and the response.
-
+One potential concern would be multicollinearity - whether the predictor variables are highly correlated. Since the number of observations in the contingency table of ECOG level and Cancer stage is too small to satisfy the rule of thumbs of the chi-square test of independence, we include two additional models in the appendix to check the multicollinearity. One model omits ECOG from the predictors, and the other omits stage from the predictors. The result came out that there is no difference between the two, which indicates that the two predictor variable is not correlated based on the data we have. In all models, there is no strong evidence of a relationship between the predictors and the response.
 
 ## Visulization
 
