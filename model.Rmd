@@ -327,7 +327,7 @@ binnedplot(fitted(model1),
 
 ## Conclusion
 
-The output of the model indicates that there is insufficient statistical evidence that the correlation between each predictor and outcome variable is significant at a significance level of 0.05, as a result, we try to figure out how to fix it. Due to the sample size and the complexity of the referral process, future studies that tries to address this particular issue may require a larger sample size.
+The output of the model indicates that there is insufficient evidence at the significance level 0.05 to conclude that any of cancer stage, ECOG level, sex assigned at birth, ethnicity, or age have an effect on referral rate.  Due to the sample size and the complexity of the referral process, future studies that tries to address this particular issue may require a larger sample size.
 
 \newpage
 
