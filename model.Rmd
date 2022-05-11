@@ -44,8 +44,10 @@ dat_1$`Genetics Referrals`<- ifelse(dat_1$`# Genetics Referrals` >0, "yes", "no"
 dat_1$`Ethnicity/ Ancestry`<- ifelse(dat_1$`Ethnicity/ Ancestry` == "white", "white", "not white")
 
 ```
+
 ## Abstract
-In the report, we are interested in exploring the relationship between cancer stage, ECOG level, sex assigned at birth, ethnicity, age, and genetic referral rate. We fit a logistic regression model to identify the relationship between predictors and the outcome variable. The output of the model indicates that there is insufficient statistical evidence that the correlation between each predictor and outcome variable is significant at a significance level of 0.05. 
+
+In this report, we explore the relationship between cancer stage, ECOG level, sex assigned at birth, ethnicity, age, and genetic testing referral rate using a logistic regression model. The result indicates no statistical evidence to support existence of association between the variables.
 
 ## Introduction
 
@@ -322,6 +324,10 @@ binnedplot(fitted(model1),
            col.pts = 1, 
            col.int = "gray")
 ```
+
+## Conclusion
+
+The output of the model indicates that there is insufficient statistical evidence that the correlation between each predictor and outcome variable is significant at a significance level of 0.05, as a result, we try to figure out how to fix it. Due to the sample size and the complexity of the referral process, future studies that tries to address this particular issue may require a larger sample size.
 
 \newpage
 
